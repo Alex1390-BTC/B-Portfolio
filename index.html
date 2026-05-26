@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>₿ Portfolio</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{--bg:#fff;--bg2:#f5f5f3;--bg3:#efefed;--text:#1a1a1a;--text2:#666;--text3:#999;--border:rgba(0,0,0,.12);--border2:rgba(0,0,0,.2);--radius:8px;--rlg:12px;--green:#1D9E75;--red:#E24B4A;--amber:#EF9F27;--blue:#3B82F6;--orange:#F97316;--gbg:#EAF3DE;--gtx:#3B6D11;--rbg:#FCEBEB;--rtx:#A32D2D;--abg:#FAEEDA;--atx:#854F0B;--bbg:#E6F1FB;--btx:#185FA5}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f0f0f0;--text2:#aaa;--text3:#555;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.2);--blue:#60A5FA;--orange:#FB923C;--gbg:#0d3320;--gtx:#5DCAA5;--rbg:#3a1515;--rtx:#F09595;--abg:#3a2a00;--atx:#FAC775;--bbg:#0c2a44;--btx:#85B7EB}}
+:root[data-theme="dark"]{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f0f0f0;--text2:#aaa;--text3:#555;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.2);--blue:#60A5FA;--orange:#FB923C;--gbg:#0d3320;--gtx:#5DCAA5;--rbg:#3a1515;--rtx:#F09595;--abg:#3a2a00;--atx:#FAC775;--bbg:#0c2a44;--btx:#85B7EB}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:14px}
+.app{width:100%;max-width:100%;margin:0;min-height:100vh}
+.nav{display:flex;gap:8px;padding:8px 16px;background:var(--bg);border-bottom:.5px solid var(--border);flex-wrap:wrap;align-items:center;z-index:100}
+@media(max-width:640px){.nav{gap:6px;padding:12px 10px}}
+.nav-logo{font-weight:600;font-size:24px;margin-right:12px;color:#F7931A;display:flex;align-items:center;gap:6px}
+@media(max-width:640px){.nav-logo{font-size:20px;margin-right:8px;gap:4px}}
+.nav-logo-text{font-size:16px;font-weight:600}
+@media(max-width:640px){.nav-logo-text{font-size:14px}}
+.nav-btn{padding:6px 11px;border:.5px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s;white-space:nowrap}
+.nav-btn:hover,.nav-btn.active{background:var(--bg2);color:var(--text);border-color:var(--border2)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.dot{width:7px;height:7px;border-radius:50%;background:#9FE1CB;display:inline-block}
+.icon-btn{padding:4px 8px;border:.5px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center}
+.page{display:none;padding:16px}.page.active{display:block}
+@media(max-width:640px){.page{padding:12px 8px}}
+.card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rlg);padding:16px 16px;margin-bottom:14px}
+@media(max-width:640px){.card{padding:14px 12px;margin-bottom:10px}}
+.metric{background:var(--bg2);border-radius:var(--radius);padding:14px 16px}
+@media(max-width:640px){.metric{padding:12px 12px}}
+.metric-value{font-size:22px;font-weight:600}
+@media(max-width:640px){.metric-value{font-size:18px}}
+.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+@media(max-width:1024px){.mgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.mgrid{grid-template-columns:repeat(2,1fr);gap:10px}}
+.mgrid-tax{grid-template-columns:repeat(2,1fr)}
+@media(max-width:1024px){.mgrid-tax{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.mgrid-tax{grid-template-columns:1fr;gap:10px}}
+.metric-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rlg);padding:14px 16px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:500;margin-bottom:12px;color:var(--text2);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}}
+.tw{overflow-x:auto}
+@media(max-width:768px){.tw{font-size:11px}table th,.tw table td{padding:8px 4px;font-size:11px}}
+table{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto}
+th{text-align:left;color:var(--text2);font-weight:400;padding:8px 10px;border-bottom:.5px solid var(--border);white-space:nowrap}
+@media(max-width:768px){th{padding:6px 4px}}
+td{padding:9px 10px;border-bottom:.5px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+td:last-child{white-space:normal}
+@media(max-width:768px){td{padding:8px 4px}}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg2)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.bg{background:var(--gbg);color:var(--gtx)}.br{background:var(--rbg);color:var(--rtx)}.ba{background:var(--abg);color:var(--atx)}.bx{background:var(--bg2);color:var(--text2)}.bb{background:var(--bbg);color:var(--btx)}
+.tl{background:var(--gbg);color:var(--gtx);font-size:11px;padding:2px 6px;border-radius:4px}
+.ts{background:var(--rbg);color:var(--rtx);font-size:11px;padding:2px 6px;border-radius:4px}
+.tbuy{background:var(--gbg);color:var(--gtx);font-size:11px;padding:2px 6px;border-radius:4px}
+.tsell{background:var(--rbg);color:var(--rtx);font-size:11px;padding:2px 6px;border-radius:4px}
+.btn{padding:8px 16px;border:.5px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--text);cursor:pointer;font-size:13px;transition:all .15s;min-height:44px}
+@media(max-width:768px){.btn{padding:10px 14px;font-size:14px;min-height:48px}}
+.btn:hover{background:var(--bg2)}.btnp{background:var(--bg2)}.btnd{color:var(--red);border-color:var(--red)}.btnd:hover{background:var(--rbg)}
+.bte{color:var(--btx);border-color:var(--btx);padding:4px 10px;font-size:12px}.bte:hover{background:var(--bbg)}
+.btn-square{width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+@media(max-width:768px){.btn-square{width:40px;height:40px;font-size:16px}}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.fg{grid-template-columns:1fr}}
+.fgrp{display:flex;flex-direction:column;gap:6px}
+.fgrp label{font-size:12px;color:var(--text2);font-weight:500}
+.fgrp input,.fgrp select{padding:10px 12px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;min-height:44px}
+@media(max-width:768px){.fgrp input,.fgrp select{font-size:16px;min-height:48px;padding:12px 14px}}
+.fgrp input:focus,.fgrp select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 2px rgba(29,158,117,.1)}
+.fa{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.st{font-size:15px;font-weight:500}
+.pp{color:var(--green);font-weight:500}.pn{color:var(--red);font-weight:500}
+.pb{height:4px;background:var(--bg3);border-radius:2px;margin-top:4px}
+.pf{height:4px;border-radius:2px;transition:width .3s}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg);border:.5px solid var(--border2);border-radius:var(--radius);padding:10px 16px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.toast.show{opacity:1}
+.es{text-align:center;padding:32px;color:var(--text3);font-size:13px}
+tr.sfree td{background:rgba(29,158,117,.05)}
+.cc{position:relative;height:200px;width:100%}
+.ib{background:var(--bg2);border-radius:var(--radius);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.7;border-left:3px solid var(--green)}
+.iba{border-left-color:var(--amber)}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center}
+.mo.open{display:flex}
+.md{background:var(--bg);border-radius:var(--rlg);padding:24px 20px;width:90%;max-width:520px;border:.5px solid var(--border2);max-height:90vh;overflow-y:auto}
+@media(max-width:640px){.md{width:95%;padding:20px 16px;max-width:100%}}
+.mt{font-size:16px;font-weight:600;margin-bottom:18px}
+@media(max-width:640px){.mt{font-size:15px;margin-bottom:16px}}
+.tb{display:flex;gap:4px;margin-bottom:12px}
+.tbb{padding:5px 12px;border:.5px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text2);cursor:pointer;font-size:12px}
+.tbb.active{background:var(--bg2);color:var(--text);border-color:var(--border2)}
+.sg{margin-bottom:16px}
+.sg h3{font-size:13px;font-weight:500;margin-bottom:8px;padding-bottom:6px;border-bottom:.5px solid var(--border)}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- HEADER: All 3 rows together as sticky unit -->
+<div style="position:sticky;top:0;z-index:100;background:var(--bg)">
+  <!-- ROW 1: Logo + Status -->
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg);border-bottom:.5px solid var(--border)">
+    <div class="nav-logo">
+      <span style="font-size:1.4em">₿</span>
+      <span class="nav-logo-text">Portfolio</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="dot" id="pdot"></span>
+      <span id="pstatus" style="font-size:12px">Laden…</span>
+      <button class="icon-btn" onclick="fetchPrices(true)" style="padding:6px 10px">↻</button>
+    </div>
+  </div>
+
+  <!-- ROW 2: Control Buttons -->
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--bg);border-bottom:.5px solid var(--border);gap:8px">
+    <button class="nav-btn" onclick="showPage('calc',this)" title="Perpetual Calculator">🧮 Calc</button>
+    <div style="display:flex;gap:8px">
+      <button class="icon-btn" onclick="openSyncModal()" title="Sync" style="padding:6px 10px">☁️</button>
+      <button class="icon-btn" onclick="openAccountsModal()" title="Konten verwalten" style="padding:6px 10px">👤</button>
+      <button class="icon-btn" onclick="toggleDarkMode()" title="Dark Mode" style="padding:6px 10px">🌙</button>
+      <button class="nav-btn" onclick="showPage('settings',this)">🔧 Einstellungen</button>
+    </div>
+  </div>
+  
+  <!-- ROW 3: Navigation -->
+  <div class="nav" style="position:static;top:auto">
+    <button class="nav-btn active" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="nav-btn" onclick="showPage('spot',this)">Spot Käufe</button>
+    <button class="nav-btn" onclick="showPage('perps',this)">Perpetuals</button>
+    <button class="nav-btn" onclick="showPage('steuer',this)">Steuer</button>
+    <button class="nav-btn" onclick="showPage('charts',this)">Charts</button>
+    <button class="nav-btn" onclick="showPage('deposits',this)">Ein- & Auszahlungen</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+  <div class="mgrid" id="dash-metrics"></div>
+  <div class="two-col">
+    <div class="card"><div class="card-title">Spot Positionen</div><div id="dash-spot"></div></div>
+    <div class="card"><div class="card-title">Perpetuals – Live PnL</div><div id="dash-perp"></div></div>
+  </div>
+</div>
+
+<!-- SPOT -->
+<div id="page-spot" class="page">
+  <div class="sh"><span class="st">Spot Käufe & Verkäufe</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <select id="spot-filter-coin" onchange="renderSpot()" style="padding:5px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit">
+        <option value="">Alle Coins</option>
+      </select>
+      <button class="btn" onclick="exportCSV('spot')">⬇ CSV</button>
+      <button class="btn btnp" onclick="openSpotModal()">+ Eintrag</button>
+    </div>
+  </div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr><th>Typ</th><th>Coin</th><th>Stück</th><th>Kaufpreis €</th><th>Live €/Coin</th><th>Akt. Wert €</th><th>PnL €</th><th>PnL %</th><th>Exchange</th><th>Datum</th><th>Notiz</th><th></th></tr></thead>
+    <tbody id="spot-tbody"></tbody>
+  </table></div></div>
+  <div class="card"><div class="card-title">Realisierte Gewinne (FIFO) <span id="spot-real-badge"></span></div><div id="spot-real"></div></div>
+</div>
+
+<!-- PERPS -->
+<div id="page-perps" class="page">
+  <div class="sh"><span class="st">Perpetual Kontrakte</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn" onclick="exportCSV('perps')">⬇ CSV</button>
+      <button class="btn btnp" onclick="openPerpModal()">+ Eintrag</button>
+    </div>
+  </div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr><th>Symbol</th><th>Dir.</th><th>Entry €</th><th>Live €/Coin</th><th>Margin €</th><th>Leverage</th><th>Liq. €</th><th>Unreal. PnL €</th><th>ROE%</th><th>Exchange</th><th>Notiz</th><th></th></tr></thead>
+    <tbody id="perp-tbody"></tbody>
+  </table></div></div>
+  <div class="card"><div class="card-title">Realisierte Perp-Gewinne/Verluste <span id="perp-real-badge"></span></div><div id="perp-real"></div></div>
+</div>
+
+<!-- STEUER -->
+<div id="page-steuer" class="page">
+  <div class="sh"><span class="st">Steuer-Übersicht</span><button class="btn" onclick="exportCSV('steuer')">⬇ CSV für Steuerberater</button></div>
+  <div class="two-col">
+    <div class="card"><div class="card-title" style="color:var(--gtx)">§23 EStG – Spot (Haltefrist 1 Jahr)</div><div class="mgrid mgrid-tax" id="tax-spot-m" style="margin-bottom:0"></div></div>
+    <div class="card"><div class="card-title" style="color:var(--btx)">§20 EStG – Perpetuals (Kapitalertragsteuer)</div><div class="mgrid mgrid-tax" id="tax-perp-m" style="margin-bottom:0"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Verlustvortrag-Status</div><div id="tax-carry"></div></div>
+  <div class="card">
+    <div class="card-title">Spot Positionen – Haltefristen §23 EStG</div>
+    <div class="tw"><table>
+      <thead><tr><th>Coin</th><th>Stück</th><th>Kaufdatum</th><th>Kaufpreis €</th><th>Live Wert €</th><th>Unreal. PnL €</th><th>Status</th><th>Steuerfrei ab</th><th>Tage</th><th>%</th></tr></thead>
+      <tbody id="tax-spot-t"></tbody>
+    </table></div>
+  </div>
+  <div class="card"><div class="card-title">Realisierte Spot-Gewinne §23 EStG (FIFO)</div><div id="tax-spot-real"></div></div>
+  <div class="card"><div class="card-title">Realisierte Perpetual-Gewinne §20 EStG</div><div id="tax-perp-real"></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="ib"><strong>§23 EStG – Spot:</strong> Gewinne aus Krypto-Verkäufen sind nach 1 Jahr Haltefrist steuerfrei. Freigrenze 1.000 €/Jahr. Persönlicher Steuersatz anwendbar.</div>
+    <div class="ib iba"><strong>§20 EStG – Perpetuals:</strong> Derivate unterliegen der Kapitalertragsteuer (25% + Soli). Keine Haltefrist-Befreiung.</div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div id="page-charts" class="page">
+  <div class="sh"><span class="st">Portfolio Charts</span></div>
+  <div class="two-col">
+    <div class="card"><div class="card-title">Aufteilung Spot Portfolio</div><div class="cc"><canvas id="ch-alloc"></canvas></div></div>
+    <div class="card"><div class="card-title">PnL pro Coin (€)</div><div class="cc"><canvas id="ch-pnl"></canvas></div></div>
+  </div>
+  <div class="card"><div class="card-title">Perpetuals – Margin vs. Unrealized PnL</div><div class="cc" style="height:160px"><canvas id="ch-perp"></canvas></div></div>
+</div>
+
+<!-- DEPOSITS -->
+<div id="page-deposits" class="page">
+  <div class="sh"><span class="st">Ein- & Auszahlungen</span><button class="btn btnp" onclick="openDepositModal()">+ Eintrag</button></div>
+  <div class="mgrid" id="dep-metrics"></div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr><th>Datum</th><th>Typ</th><th>Betrag €</th><th>Von</th><th>An</th><th>Notiz</th><th></th></tr></thead>
+    <tbody id="dep-tbody"></tbody>
+  </table></div></div>
+  <div class="card"><div class="card-title">Nach Exchange</div><div id="dep-byex"></div></div>
+</div>
+
+<!-- CALC -->
+<div id="page-calc" class="page">
+  <div class="sh"><span class="st">🧮 Perpetual Futures Calculator</span></div>
+  <div id="calc-container" style="padding:16px"></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="page-settings" class="page">
+  <div class="sh"><span class="st">⚙ Einstellungen</span></div>
+  <div class="card">
+    <div class="sg"><h3>Steuersatz §23 EStG (Spot)</h3>
+      <div class="fg" style="max-width:400px"><div class="fgrp"><label>Persönlicher Steuersatz (%)</label><input id="set-stax" type="number" step="0.1" min="0" max="100" placeholder="z.B. 42"/></div></div>
+    </div>
+    <div class="sg"><h3>Kapitalertragsteuer §20 EStG (Perpetuals)</h3>
+      <div class="fg" style="max-width:400px"><div class="fgrp"><label>Steuersatz (%) inkl. Soli</label><input id="set-ptax" type="number" step="0.1" min="0" max="100" placeholder="26.375"/></div></div>
+    </div>
+    <div class="sg"><h3>Verlustvortrag</h3>
+      <div class="fg" style="max-width:620px">
+        <div class="fgrp"><label>Verlustvortrag Spot §23 EStG (€)</label><input id="set-lspot" type="number" step="any" min="0" placeholder="0"/></div>
+        <div class="fgrp"><label>Verlustvortrag Perpetuals §20 EStG (€)</label><input id="set-lperp" type="number" step="any" min="0" placeholder="0"/></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Laufende Jahresverluste werden zuerst verrechnet, danach der Verlustvortrag.</div>
+    </div>
+    <div class="fa" style="justify-content:flex-start"><button class="btn btnp" onclick="saveSettings()">Einstellungen speichern</button></div>
+  </div>
+  <div class="card">
+    <div class="sg"><h3>Daten verwalten</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn" onclick="exportAll()">⬇ Exportieren (JSON)</button>
+        <button class="btn" onclick="document.getElementById('imp-input').click()">⬆ Importieren (JSON)</button>
+        <button class="btn" onclick="exportPDF()" style="color:#c0392b;border-color:#c0392b">⬇ Exportieren (PDF)</button>
+        <button class="btn btnd" onclick="clearAll()">⚠ Alle Daten löschen</button>
+      </div>
+      <input type="file" id="imp-input" accept=".json" style="display:none" onchange="importAll(event)"/>
+      <div id="imp-status" style="margin-top:8px;font-size:12px"></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Import überschreibt alle Daten. Vorher exportieren empfohlen.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SYNC MODAL -->
+<div class="mo" id="mo-sync">
+<div class="md" style="max-width:480px">
+  <div class="mt" style="display:flex;align-items:center;gap:8px">
+    <span style="font-size:20px">📤</span> Sync – Import/Export
+  </div>
+  <div style="font-size:13px;line-height:1.8;color:var(--text2);margin-bottom:18px">
+    <strong>Exportiere deine Daten als JSON</strong> und importiere sie auf einem anderen Gerät. So bleibt dein Portfolio auf Mac und iPhone immer synchron.
+  </div>
+  <div style="background:var(--gbg);border-radius:var(--radius);padding:12px;margin-bottom:16px;font-size:12px;color:var(--gtx);line-height:1.7">
+    <strong>📋 Anleitung:</strong><br>
+    1. Hier auf „Exportieren" klicken<br>
+    2. Datei auf dem anderen Gerät importieren<br>
+    3. Fertig – deine Daten sind synchron!
+  </div>
+  <div id="sync-status" style="font-size:11px;color:var(--text3);margin-bottom:12px;min-height:20px"></div>
+  <div class="fa">
+    <button class="btn" onclick="closeMo('mo-sync')">Schließen</button>
+    <button class="btn" onclick="exportSync()" style="background:var(--green);color:#fff;border:none">⬇ Exportieren</button>
+    <button class="btn btnp" onclick="document.getElementById('sync-input').click()">⬆ Importieren</button>
+  </div>
+  <input type="file" id="sync-input" accept=".json" style="display:none" onchange="importSync(event)"/>
+</div>
+</div>
+
+<!-- ACCOUNTS MODAL -->
+<div class="mo" id="mo-accounts">
+<div class="md" style="max-width:450px">
+  <div class="mt">👤 Konten verwalten</div>
+  <div style="margin-bottom:16px">
+    <div id="accounts-list" style="max-height:300px;overflow-y:auto;margin-bottom:12px;border:.5px solid var(--border);border-radius:var(--radius);padding:8px">
+    </div>
+    <button class="btn btnp" onclick="createNewAccount()" style="width:100%;text-align:center">+ Neues Konto</button>
+  </div>
+  <div class="fa">
+    <button class="btn" onclick="closeMo('mo-accounts')">Schließen</button>
+  </div>
+</div>
+</div>
+</div><!-- end .app -->
+
+<div class="toast" id="toast"></div>
+
+<!-- SPOT MODAL -->
+<div class="mo" id="mo-spot">
+<div class="md">
+  <div class="mt" id="mo-spot-title">Spot Eintrag</div>
+  <div class="tb">
+    <button class="tbb active" id="stab-buy" onclick="setSpotTab('buy')">Kauf</button>
+    <button class="tbb" id="stab-sell" onclick="setSpotTab('sell')">Verkauf</button>
+  </div>
+  <input type="hidden" id="s-id"/>
+  <div class="fg">
+    <div class="fgrp"><label>Coin Symbol *</label><input id="s-coin" placeholder="BTC, ETH…"/></div>
+    <div class="fgrp"><label>Stückanzahl *</label><input id="s-amount" type="number" step="any" placeholder="0.5"/></div>
+    <div class="fgrp"><label id="s-plabel">Gesamtpreis EUR * (was du gezahlt hast)</label><input id="s-eur" type="number" step="any" placeholder="5000" oninput="calcSpotUsd()"/></div>
+    <div class="fgrp"><label id="s-dlabel">Datum *</label><input id="s-date" type="date" onchange="calcSpotUsd()"/></div>
+    <div class="fgrp"><label>Exchange</label><input id="s-exch" placeholder="Binance, Trezor…"/></div>
+    <div class="fgrp"><label>Notiz</label><input id="s-note" placeholder=""/></div>
+  </div>
+  <div id="s-rate-info" style="margin-top:8px;font-size:11px;color:var(--text3)"></div>
+  <div id="s-sell-info" style="display:none;margin-top:8px" class="ib iba">Verkäufe werden per FIFO verrechnet.</div>
+  <div class="fa">
+    <button class="btn" onclick="closeMo('mo-spot')">Abbrechen</button>
+    <button class="btn btnp" onclick="saveSpot()">Speichern</button>
+  </div>
+</div>
+</div>
+
+<!-- PERP MODAL -->
+<div class="mo" id="mo-perp">
+<div class="md">
+  <div class="mt" id="mo-perp-title">Perpetual Eintrag</div>
+  <div class="tb">
+    <button class="tbb active" id="ptab-open" onclick="setPerpTab('open')">Position öffnen</button>
+    <button class="tbb" id="ptab-close" onclick="setPerpTab('close')">Position schließen</button>
+  </div>
+  <input type="hidden" id="p-id"/>
+  <div id="p-open-form">
+    <div class="fg">
+      <div class="fgrp"><label>Symbol *</label><input id="p-coin" placeholder="BTC"/></div>
+      <div class="fgrp"><label>Richtung</label><select id="p-dir"><option value="long">Long ↑</option><option value="short">Short ↓</option></select></div>
+      <div class="fgrp"><label>Entry Preis USD *</label><input id="p-entry-usd" type="number" step="any" placeholder="60000" oninput="calcPerpUsdToEur()"/></div>
+      <div class="fgrp"><label>= EUR (berechnet)</label><div id="p-entry-eur-display" style="padding:7px 10px;border:.5px solid var(--border);border-radius:var(--radius);background:var(--bg3);color:var(--text);font-size:13px;min-height:34px">–</div></div>
+      <div class="fgrp"><label>Margin USD *</label><input id="p-margin-usd" type="number" step="any" placeholder="1000" oninput="calcPerpUsdToEur()"/></div>
+      <div class="fgrp"><label>= EUR (berechnet)</label><div id="p-margin-eur-display" style="padding:7px 10px;border:.5px solid var(--border);border-radius:var(--radius);background:var(--bg3);color:var(--text);font-size:13px;min-height:34px">–</div></div>
+      <div class="fgrp"><label>Positionsgröße (Coins) *</label><input id="p-size" type="number" step="any" placeholder="0.5" oninput="calcPerpLeverage()"/></div>
+      <div class="fgrp"><label>Berechneter Hebel</label><div id="p-lev-display" style="padding:7px 10px;border:.5px solid var(--border);border-radius:var(--radius);background:var(--bg3);color:var(--text);font-size:13px;min-height:34px">–</div></div>
+      <div class="fgrp"><label>Exchange</label><input id="p-exch" placeholder="Bybit…"/></div>
+      <div class="fgrp"><label>Notiz</label><input id="p-note" placeholder=""/></div>
+    </div>
+  </div>
+  <div id="p-close-form" style="display:none">
+    <div class="fg">
+      <div class="fgrp"><label>Position *</label><select id="p-close-sel"></select></div>
+      <div class="fgrp"><label>Schließpreis USD *</label><input id="p-close-price-usd" type="number" step="any" oninput="calcClosePriceEur()"/></div>
+      <div class="fgrp"><label>= EUR (berechnet)</label><div id="p-close-price-eur-display" style="padding:7px 10px;border:.5px solid var(--border);border-radius:var(--radius);background:var(--bg3);color:var(--text);font-size:13px;min-height:34px">–</div></div>
+      <div class="fgrp"><label>Menge (leer = alle)</label><input id="p-close-size" type="number" step="any"/></div>
+      <div class="fgrp"><label>Datum</label><input id="p-close-date" type="date"/></div>
+    </div>
+  </div>
+  <div class="fa">
+    <button class="btn" onclick="closeMo('mo-perp')">Abbrechen</button>
+    <button class="btn btnp" onclick="savePerp()">Speichern</button>
+  </div>
+</div>
+</div>
+
+<!-- DEPOSIT MODAL -->
+<div class="mo" id="mo-dep">
+<div class="md">
+  <div class="mt" id="mo-dep-title">Einzahlung eintragen</div>
+  <input type="hidden" id="dep-id"/>
+  <div class="fg">
+    <div class="fgrp"><label>Typ</label><select id="dep-type"><option value="deposit">Einzahlung</option><option value="withdrawal">Auszahlung</option></select></div>
+    <div class="fgrp"><label>Betrag € *</label><input id="dep-amt" type="number" step="any" placeholder="500"/></div>
+    <div class="fgrp"><label>Datum *</label><input id="dep-date" type="date"/></div>
+    <div class="fgrp"><label>Von (Bankkonto) *</label><input id="dep-from" placeholder="ING-DiBa Girokonto"/></div>
+    <div class="fgrp"><label>An (Exchange) *</label><input id="dep-to" placeholder="Binance"/></div>
+    <div class="fgrp" style="grid-column:span 2"><label>Notiz</label><input id="dep-note" placeholder=""/></div>
+  </div>
+  <div class="fa">
+    <button class="btn" onclick="closeMo('mo-dep')">Abbrechen</button>
+    <button class="btn btnp" onclick="saveDeposit()">Speichern</button>
+  </div>
+</div>
+</div>
+
+
+<script>
+// ─── SYMBOL MAP ───────────────────────────────────────────
+const SYM={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',ADA:'cardano',XRP:'ripple',DOGE:'dogecoin',AVAX:'avalanche-2',DOT:'polkadot',MATIC:'matic-network',LINK:'chainlink',UNI:'uniswap',ATOM:'cosmos',LTC:'litecoin',NEAR:'near-protocol',TRX:'tron',OP:'optimism',ARB:'arbitrum',INJ:'injective-protocol',SUI:'sui',APT:'aptos',FTM:'fantom',ALGO:'algorand',VET:'vechain',SAND:'the-sandbox',MANA:'decentraland',AAVE:'aave',MKR:'maker',CRV:'curve-dao-token',PEPE:'pepe',WIF:'dogwifcoin',BONK:'bonk',TON:'the-open-network'};
+const FB={bitcoin:67500,ethereum:3520,solana:175,binancecoin:412,cardano:0.62,ripple:0.58,dogecoin:0.18,'avalanche-2':38,polkadot:8.2,'matic-network':0.78,chainlink:18.4,uniswap:10.2,cosmos:9.8,litecoin:85,'near-protocol':7.1,tron:0.14,optimism:2.1,arbitrum:0.95,'injective-protocol':24,sui:1.2,aptos:8.5,fantom:0.6,algorand:0.18,vechain:0.035,'the-sandbox':0.39,decentraland:0.38,aave:98,maker:2100,'curve-dao-token':0.4,pepe:0.0000135,dogwifcoin:2.8,bonk:0.000028,'the-open-network':5.4};
+let prices={...FB};
+let eurUsd=1.16;
+
+function getPriceUsd(sym){const id=SYM[sym?.toUpperCase()];return(id&&prices[id])||FB[id]||1}
+function getPriceEur(sym){return getPriceUsd(sym)/eurUsd}
+
+// Format EUR – 4 decimals for prices < 10
+function fEprice(n){
+  const v=Number(n);
+  if(v<10&&v>0) return'€'+v.toLocaleString('de-DE',{minimumFractionDigits:4,maximumFractionDigits:4});
+  return'€'+v.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+// ─── DARK MODE ────────────────────────────────────────────
+function toggleDarkMode(){
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if(isDark){
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('ct_theme', 'light');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('ct_theme', 'dark');
+  }
+}
+
+function initTheme(){
+  const saved = localStorage.getItem('ct_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = saved ? saved === 'dark' : prefersDark;
+  if(isDark) document.documentElement.setAttribute('data-theme', 'dark');
+}
+
+initTheme();
+
+// ─── ACCOUNTS MANAGEMENT ──────────────────────────────────
+let accounts=JSON.parse(localStorage.getItem('ct_accounts'))||[{id:1,name:'Hauptkonto',default:true}];
+let currentAccountId=parseInt(localStorage.getItem('ct_current_account'))||1;
+
+function saveAccountsData(){
+  localStorage.setItem('ct_accounts',JSON.stringify(accounts));
+  localStorage.setItem('ct_current_account',currentAccountId);
+}
+
+function getAccountKey(field){
+  return `ct_${currentAccountId}_${field}`;
+}
+
+function switchAccount(accountId){
+  // Save current data
+  localStorage.setItem(getAccountKey('spots'),JSON.stringify(spots));
+  localStorage.setItem(getAccountKey('perps'),JSON.stringify(perps));
+  localStorage.setItem(getAccountKey('perp_real'),JSON.stringify(perpReal));
+  localStorage.setItem(getAccountKey('deps'),JSON.stringify(deposits));
+  localStorage.setItem(getAccountKey('cfg'),JSON.stringify(cfg));
+  
+  // Switch to new account
+  currentAccountId=accountId;
+  saveAccountsData();
+  
+  // Load new account data
+  spots=JSON.parse(localStorage.getItem(getAccountKey('spots')))||[];
+  perps=JSON.parse(localStorage.getItem(getAccountKey('perps')))||[];
+  perpReal=JSON.parse(localStorage.getItem(getAccountKey('perp_real')))||[];
+  deposits=JSON.parse(localStorage.getItem(getAccountKey('deps')))||[];
+  cfg=JSON.parse(localStorage.getItem(getAccountKey('cfg')))||{spotTax:42,perpTax:26.375,lossSpot:0,lossPerp:0};
+  
+  renderDash();
+  toast(`Konto gewechselt zu "${accounts.find(a=>a.id===accountId).name}"`);
+  closeAccountsModal();
+}
+
+function createNewAccount(){
+  const name=prompt('Kontoname:','Konto '+(Math.max(...accounts.map(a=>a.id))+1));
+  if(!name)return;
+  const newId=Math.max(...accounts.map(a=>a.id))+1;
+  accounts.push({id:newId,name:name.substring(0,50),default:false});
+  saveAccountsData();
+  switchAccount(newId);
+  openAccountsModal();
+}
+
+function renameAccount(id){
+  const acc=accounts.find(a=>a.id===id);
+  const newName=prompt('Neuer Name:',acc.name);
+  if(!newName)return;
+  acc.name=newName.substring(0,50);
+  saveAccountsData();
+  renderAccountsList();
+}
+
+function deleteAccount(id){
+  if(accounts.length===1){toast('⚠ Du brauchst mindestens ein Konto');return;}
+  if(!confirm('Dieses Konto und alle Daten löschen?'))return;
+  accounts=accounts.filter(a=>a.id!==id);
+  // Delete all data for this account
+  localStorage.removeItem(getAccountKey('spots'));
+  localStorage.removeItem(getAccountKey('perps'));
+  localStorage.removeItem(getAccountKey('perp_real'));
+  localStorage.removeItem(getAccountKey('deps'));
+  localStorage.removeItem(getAccountKey('cfg'));
+  if(currentAccountId===id){
+    currentAccountId=accounts[0].id;
+  }
+  saveAccountsData();
+  switchAccount(currentAccountId);
+  openAccountsModal();
+}
+
+function renderAccountsList(){
+  const list=document.getElementById('accounts-list');
+  list.innerHTML=accounts.map(acc=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:.5px solid var(--border);justify-content:space-between">
+      <div style="flex:1">
+        <div style="font-weight:500">${acc.name}</div>
+        <div style="font-size:11px;color:var(--text3)">ID: ${acc.id}${currentAccountId===acc.id?' (aktiv)':''}</div>
+      </div>
+      <div style="display:flex;gap:4px">
+        ${currentAccountId!==acc.id?`<button class="btn bte btn-square" onclick="switchAccount(${acc.id})" title="Wechseln">✓</button>`:''}
+        <button class="btn bte btn-square" onclick="renameAccount(${acc.id})" title="Umbenennen">✎</button>
+        ${accounts.length>1?`<button class="btn btnd btn-square" onclick="deleteAccount(${acc.id})" title="Löschen">✕</button>`:''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function openAccountsModal(){
+  renderAccountsList();
+  document.getElementById('mo-accounts').classList.add('open');
+}
+
+function closeAccountsModal(){
+  document.getElementById('mo-accounts').classList.remove('open');
+}
+
+// ─── SYNC MANAGEMENT ──────────────────────────────────────
+function openSyncModal(){
+  document.getElementById('mo-sync').classList.add('open');
+}
+
+function closeSyncModal(){
+  document.getElementById('mo-sync').classList.remove('open');
+}
+
+function exportSync(){
+  const data = {
+    account: {
+      id: currentAccountId,
+      name: accounts.find(a=>a.id===currentAccountId).name
+    },
+    spots,
+    perps,
+    perpReal,
+    deposits,
+    cfg,
+    exportedAt: new Date().toISOString(),
+    device: navigator.userAgent.includes('iPhone')||navigator.userAgent.includes('iPad')?'iPhone/iPad':'Mac'
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `portfolio_${currentAccountId}_${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  
+  const status = document.getElementById('sync-status');
+  status.innerHTML = '<span style="color:var(--green)">✓ Datei heruntergeladen!</span>';
+  setTimeout(()=>{status.innerHTML='';}, 3000);
+}
+
+function importSync(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      
+      if(!data.spots || !data.cfg){
+        toast('⚠ Ungültige Datei');
+        return;
+      }
+      
+      // Import into current account
+      spots = data.spots.map(migrateSpot);
+      perps = data.perps || [];
+      perpReal = data.perpReal || [];
+      deposits = data.deposits || [];
+      cfg = data.cfg || {spotTax:42,perpTax:26.375,lossSpot:0,lossPerp:0};
+      
+      save();
+      renderDash();
+      
+      const status = document.getElementById('sync-status');
+      status.innerHTML = `<span style="color:var(--green)">✓ Erfolgreich importiert! (${new Date(data.exportedAt).toLocaleString('de-DE')})</span>`;
+      setTimeout(()=>{status.innerHTML='';}, 5000);
+      
+      toast('✓ Daten importiert!');
+    } catch(err) {
+      toast('⚠ Fehler beim Import');
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+  
+  // Reset input
+  event.target.value = '';
+}
+
+// ─── DATA ─────────────────────────────────────────────────
+// Migration: old entries had `price` (USD total). New: priceEur (EUR total), priceUsd (USD total)
+function migrateSpot(s){
+  if(s.priceEur!==undefined) return s; // already migrated
+  // Old format: price was USD total paid
+  const priceUsd = s.price || 0;
+  const priceEur = priceUsd / 1.08; // approximate migration
+  return {...s, priceEur, priceUsd, price:undefined};
+}
+
+let spots    = (JSON.parse(localStorage.getItem(`ct_${currentAccountId}_spots`)||'[]')).map(migrateSpot);
+let perps    = JSON.parse(localStorage.getItem(`ct_${currentAccountId}_perps`)||'[]');
+let perpReal = JSON.parse(localStorage.getItem(`ct_${currentAccountId}_perp_real`)||'[]');
+let deposits = JSON.parse(localStorage.getItem(`ct_${currentAccountId}_deps`)||'[]');
+let cfg      = JSON.parse(localStorage.getItem(`ct_${currentAccountId}_cfg`)||'{"spotTax":42,"perpTax":26.375,"lossSpot":0,"lossPerp":0}');
+
+function save(){
+  localStorage.setItem(`ct_${currentAccountId}_spots`,JSON.stringify(spots));
+  localStorage.setItem(`ct_${currentAccountId}_perps`,JSON.stringify(perps));
+  localStorage.setItem(`ct_${currentAccountId}_perp_real`,JSON.stringify(perpReal));
+  localStorage.setItem(`ct_${currentAccountId}_deps`,JSON.stringify(deposits));
+  localStorage.setItem(`ct_${currentAccountId}_cfg`,JSON.stringify(cfg));
+
+}
+
+// Load data from localStorage only
+async function loadDataJson(){
+  // Data is already loaded from localStorage above
+  return true;
+}
+
+// ─── PRICE FETCH ──────────────────────────────────────────
+async function fetchPrices(manual=false){
+  const dot=document.getElementById('pdot'),st=document.getElementById('pstatus'),btn=document.querySelector('[onclick="fetchPrices(true)"]');
+  if(btn)btn.style.animation='spin 0.6s linear';
+  dot.style.background='#FAC775'; st.textContent='Aktualisiere…';
+  const ids=[...new Set([...spots.map(s=>SYM[s.coin?.toUpperCase()]).filter(Boolean),...perps.map(p=>SYM[p.coin?.toUpperCase()]).filter(Boolean),...Object.values(SYM).slice(0,20)])].join(',');
+  try{
+    const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`,{signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw new Error();
+    const d=await r.json();
+    Object.keys(d).forEach(id=>{if(d[id]?.usd)prices[id]=d[id].usd});
+    // EUR/USD
+    try{ await fetchEurUsd(); }catch(e){}
+    dot.style.background='#5DCAA5';
+    const t=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    st.textContent=`Live · ${t} · 1€=${eurUsd.toFixed(4)}$`;
+  }catch(e){
+    dot.style.background='#E24B4A'; st.textContent='Demo-Preise';
+    if(manual)toast('CoinGecko nicht erreichbar – Demo-Preise aktiv');
+  }
+  if(btn)btn.style.animation='';
+  refreshActive();
+}
+
+async function fetchEurUsd(){
+  // Try 3 free APIs in order – all no-key, CORS-enabled
+  const sources=[
+    // 1. fxapi.app – updated every 5min, no key
+    async()=>{
+      const r=await fetch('https://fxapi.app/api/EUR/USD.json',{signal:AbortSignal.timeout(4000)});
+      const d=await r.json(); return d.rate;
+    },
+    // 2. cdn.jsdelivr (fawazahmed0 currency-api) – no key, CDN backed
+    async()=>{
+      const r=await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json',{signal:AbortSignal.timeout(4000)});
+      const d=await r.json(); return d.eur?.usd;
+    },
+    // 3. frankfurter.dev (new domain, different from .app)
+    async()=>{
+      const r=await fetch('https://api.frankfurter.dev/v2/rate/EUR/USD',{signal:AbortSignal.timeout(4000)});
+      const d=await r.json(); return d.rate;
+    },
+    // 4. exchangerate-api open access (no key needed)
+    async()=>{
+      const r=await fetch('https://open.er-api.com/v6/latest/EUR',{signal:AbortSignal.timeout(4000)});
+      const d=await r.json(); return d.rates?.USD;
+    },
+  ];
+  for(const src of sources){
+    try{
+      const rate=await src();
+      if(rate&&rate>0.5&&rate<3){
+        eurUsd=rate;
+        localStorage.setItem('ct_eurusd',JSON.stringify({rate,ts:Date.now()}));
+        return rate;
+      }
+    }catch(e){}
+  }
+  // Use cached value if available
+  try{
+    const cached=JSON.parse(localStorage.getItem('ct_eurusd')||'null');
+    if(cached&&cached.rate&&(Date.now()-cached.ts)<86400000){eurUsd=cached.rate;return cached.rate;}
+  }catch(e){}
+  return eurUsd; // keep current value
+}
+
+async function fetchHistEurUsd(dateStr){
+  const year=parseInt(dateStr?.substring(0,4));
+  // Try live APIs for historical rate
+  const sources=[
+    async()=>{
+      const r=await fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${dateStr}/v1/currencies/eur.json`,{signal:AbortSignal.timeout(4000)});
+      const d=await r.json(); return d.eur?.usd;
+    },
+    async()=>{
+      const r=await fetch(`https://api.frankfurter.dev/v2/rates?from=${dateStr}&to=${dateStr}&base=EUR&symbols=USD`,{signal:AbortSignal.timeout(4000)});
+      const d=await r.json(); return d.rates?.USD||d.data?.[dateStr]?.USD;
+    },
+  ];
+  for(const src of sources){
+    try{
+      const rate=await src();
+      if(rate&&rate>0.5&&rate<3)return rate;
+    }catch(e){}
+  }
+  // Accurate historical fallback by year (ECB reference rates)
+  const hist={2015:1.085,2016:1.107,2017:1.130,2018:1.181,2019:1.119,2020:1.142,2021:1.183,2022:1.053,2023:1.081,2024:1.085,2025:1.073,2026:1.16};
+  return hist[year]||eurUsd;
+}
+
+// ─── NAV ──────────────────────────────────────────────────
+let charts={};
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  refreshActive();
+}
+function refreshActive(){
+  const id=document.querySelector('.page.active')?.id?.replace('page-','');
+  if(id==='dashboard')renderDash();
+  else if(id==='spot')renderSpot();
+  else if(id==='perps')renderPerps();
+  else if(id==='steuer')renderSteuer();
+  else if(id==='charts')renderCharts();
+  else if(id==='calc')initCalc();
+  else if(id==='deposits')renderDeposits();
+  else if(id==='settings')renderSettings();
+}
+
+// ─── FORMAT ───────────────────────────────────────────────
+function fE(n){return'€'+Number(n).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fN(n,d=4){return Number(n).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:d})}
+function pc(v){return v>=0?'pp':'pn'}
+function sgn(v){return v>=0?'+':''}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function closeMo(id){document.getElementById(id).classList.remove('open')}
+
+// ─── FIFO ─────────────────────────────────────────────────
+// Returns remaining holdings {coin, amount, costEur} after FIFO sells
+function fifoHoldings(){
+  const coins=[...new Set(spots.map(s=>s.coin))];
+  const h={};
+  for(const coin of coins){
+    const buys=spots.filter(s=>s.coin===coin&&s.type!=='sell').sort((a,b)=>new Date(a.date)-new Date(b.date)).map(s=>({...s,rem:s.amount}));
+    const sells=spots.filter(s=>s.coin===coin&&s.type==='sell').sort((a,b)=>new Date(a.date)-new Date(b.date));
+    for(const sell of sells){
+      let toSell=sell.amount;
+      while(toSell>1e-10&&buys.length){
+        const b=buys[0];const used=Math.min(b.rem,toSell);
+        b.rem-=used;toSell-=used;
+        if(b.rem<1e-10)buys.shift();
+      }
+    }
+    if(!h[coin])h[coin]={coin,amount:0,costEur:0};
+    buys.forEach(b=>{
+      // priceEur is TOTAL paid in EUR for the whole lot
+      // cost per coin = priceEur / original amount
+      const eurPerCoin = b.priceEur / b.amount;
+      h[coin].amount+=b.rem;
+      h[coin].costEur+=b.rem*eurPerCoin;
+    });
+  }
+  return h;
+}
+
+// Returns all FIFO realized trades
+function fifoRealized(){
+  const coins=[...new Set(spots.map(s=>s.coin))];
+  let all=[];
+  for(const coin of coins){
+    const buys=spots.filter(s=>s.coin===coin&&s.type!=='sell').sort((a,b)=>new Date(a.date)-new Date(b.date)).map(s=>({...s,rem:s.amount}));
+    const sells=spots.filter(s=>s.coin===coin&&s.type==='sell').sort((a,b)=>new Date(a.date)-new Date(b.date));
+    for(const sell of sells){
+      let toSell=sell.amount;
+      while(toSell>1e-10&&buys.length){
+        const b=buys[0];const used=Math.min(b.rem,toSell);
+        const eurPerCoinBuy=b.priceEur/b.amount;
+        const eurPerCoinSell=sell.priceEur/sell.amount;
+        const cost=used*eurPerCoinBuy;
+        const proceeds=used*eurPerCoinSell;
+        const holdDays=(new Date(sell.date)-new Date(b.date))/86400000;
+        all.push({coin,amount:used,buyDate:b.date,sellDate:sell.date,buyPriceEur:eurPerCoinBuy,sellPriceEur:eurPerCoinSell,cost,proceeds,gain:proceeds-cost,holdDays,taxFree:holdDays>=365});
+        b.rem-=used;toSell-=used;
+        if(b.rem<1e-10)buys.shift();
+      }
+    }
+  }
+  return all;
+}
+
+// ─── PERP PNL ─────────────────────────────────────────────
+function calcEffectiveLeverage(p){
+  // Leverage = (positionSize * entryPrice) / margin
+  if(!p.margin||!p.entry||!p.size) return p.leverage||1;
+  return (p.size*p.entry)/p.margin;
+}
+
+function perpPnl(p){
+  const cur=getPriceEur(p.coin);
+  const lev=calcEffectiveLeverage(p);
+  const pnl=p.dir==='long'?(cur-p.entry)*p.size:(p.entry-cur)*p.size;
+  const roe=(pnl/p.margin)*100;
+  const liq=p.dir==='long'?p.entry*(1-1/lev):p.entry*(1+1/lev);
+  return{cur,pnl,roe,liq,lev};
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────
+function renderDash(){
+  const h=fifoHoldings();
+  const spotValEur=Object.values(h).reduce((a,x)=>a+x.amount*getPriceEur(x.coin),0);
+  const spotCostEur=Object.values(h).reduce((a,x)=>a+x.costEur,0);
+  const spotPnl=spotValEur-spotCostEur;
+  const spotPct=spotCostEur>0?(spotPnl/spotCostEur*100).toFixed(1):'0.0';
+
+  const marginEur=perps.reduce((a,p)=>a+p.margin,0);
+  const perpPnlEur=perps.reduce((a,p)=>a+perpPnl(p).pnl,0);
+  const totalUnreal=spotPnl+perpPnlEur;
+  const total=spotValEur+marginEur+perpPnlEur;
+  const totalInv=spotCostEur+marginEur;
+
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Gesamt Portfolio</div><div class="metric-value">${fE(total)}</div><div class="metric-sub">Spot + Margin + PnL</div></div>
+    <div class="metric"><div class="metric-label">Gesamt Investiert</div><div class="metric-value">${fE(totalInv)}</div><div class="metric-sub">Spot: ${fE(spotCostEur)} · Margin: ${fE(marginEur)}</div></div>
+    <div class="metric"><div class="metric-label">Unreal. Spot PnL</div><div class="metric-value"><span class="${pc(spotPnl)}">${sgn(spotPnl)}${fE(spotPnl)}</span></div><div class="metric-sub"><span class="${pc(spotPnl)}">${sgn(spotPnl)}${spotPct}%</span></div></div>
+    <div class="metric"><div class="metric-label">Unreal. Perp PnL</div><div class="metric-value"><span class="${pc(perpPnlEur)}">${sgn(perpPnlEur)}${fE(perpPnlEur)}</span></div><div class="metric-sub">${perps.length} Position${perps.length===1?'':'en'}</div></div>
+    <div class="metric"><div class="metric-label">Gesamt Unreal. PnL</div><div class="metric-value"><span class="${pc(totalUnreal)}">${sgn(totalUnreal)}${fE(totalUnreal)}</span></div><div class="metric-sub">Spot + Perpetuals</div></div>
+  `;
+
+  // Spot list with amounts and DCA
+  const spotHtml=Object.values(h).filter(x=>x.amount>1e-10).sort((a,b)=>b.amount*getPriceEur(b.coin)-a.amount*getPriceEur(a.coin)).slice(0,8).map(x=>{
+    const val=x.amount*getPriceEur(x.coin);
+    const pnl=val-x.costEur;
+    const pct=x.costEur>0?(pnl/x.costEur*100).toFixed(1):'0.0';
+    const dca=x.amount>0?x.costEur/x.amount:0;
+    return`<div style="display:grid;grid-template-columns:50px 60px 70px 70px 70px 70px 70px;gap:6px;align-items:center;padding:8px 0;border-bottom:.5px solid var(--border);font-size:12px">
+      <span style="font-weight:500">${x.coin}</span>
+      <span style="text-align:right;color:var(--text3);font-size:11px">${fN(x.amount,4)}</span>
+      <span style="text-align:right;font-size:11px">${fEprice(dca)}</span>
+      <span style="text-align:right;font-size:11px">${fEprice(getPriceEur(x.coin))}</span>
+      <span style="text-align:right">${fE(val)}</span>
+      <span class="${pc(pnl)}" style="text-align:right">${sgn(pnl)}${fE(pnl)}</span>
+      <span class="${pc(pnl)}" style="text-align:right">${sgn(pnl)}${pct}%</span>
+    </div>`;
+  }).join('');
+  const spotHeader=`<div style="display:grid;grid-template-columns:50px 60px 70px 70px 70px 70px 70px;gap:6px;align-items:center;padding:8px 0;border-bottom:.5px solid var(--border);margin-bottom:4px;font-size:11px;color:var(--text2);font-weight:500">
+    <span>Coin</span>
+    <span style="text-align:right">Stück</span>
+    <span style="text-align:right">DCA €</span>
+    <span style="text-align:right">Live €</span>
+    <span style="text-align:right">Wert €</span>
+    <span style="text-align:right">PnL €</span>
+    <span style="text-align:right">PnL %</span>
+  </div>`;
+  document.getElementById('dash-spot').innerHTML=(spotHtml?spotHeader+spotHtml:'<div class="es">Noch keine Spot-Käufe</div>');
+
+  const perpHeader=`<div style="display:grid;grid-template-columns:90px 85px 85px 85px 65px 75px 75px 85px;gap:6px;align-items:center;padding:8px 0;border-bottom:.5px solid var(--border);margin-bottom:6px;font-size:11px;color:var(--text2);font-weight:500;overflow-x:auto">
+    <span>Coin</span>
+    <span style="text-align:right">Entry €</span>
+    <span style="text-align:right">Live €</span>
+    <span style="text-align:right">Margin €</span>
+    <span style="text-align:right">Hebel</span>
+    <span style="text-align:right">PnL €</span>
+    <span style="text-align:right">ROE %</span>
+    <span style="text-align:right">Liq. €</span>
+  </div>`;
+  const perpHtml=perps.map(p=>{
+    const{cur,pnl,roe,liq,lev}=perpPnl(p);
+    const danger=p.dir==='long'?cur<liq*1.1:cur>liq*0.9;
+    const liqUsd=liq;
+    return`<div style="display:grid;grid-template-columns:90px 85px 85px 85px 65px 75px 75px 85px;gap:6px;align-items:center;padding:8px 0;border-bottom:.5px solid var(--border);font-size:12px;overflow-x:auto">
+      <span style="font-weight:500">${p.coin} <span class="${p.dir==='long'?'tl':'ts'}">${p.dir.toUpperCase()}</span></span>
+      <span style="text-align:right">${fEprice(p.entry)}</span>
+      <span style="text-align:right">${fEprice(cur)}</span>
+      <span style="text-align:right">${fE(p.margin)}</span>
+      <span style="text-align:right;color:var(--amber)">${lev.toFixed(2)}x</span>
+      <span class="${pc(pnl)}" style="text-align:right">${sgn(pnl)}${fE(pnl)}</span>
+      <span class="${pc(roe)}" style="text-align:right">${sgn(roe)}${roe.toFixed(1)}%</span>
+      <span style="text-align:right;color:${danger?'var(--red)':'var(--text2)'}">${fEprice(liqUsd)}${danger?' ⚠':''}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('dash-perp').innerHTML=(perpHtml?perpHeader+perpHtml:'<div class="es">Noch keine Perpetuals</div>');
+  
+  // Render prices
+  renderPrices();
+}
+
+// ─── PRICES ───────────────────────────────────────────────
+function renderPrices(){
+  // Sammle alle einzigartigen Coins aus Spots und Perps
+  const coins=[...new Set([
+    ...spots.map(s=>s.coin),
+    ...perps.map(p=>p.coin)
+  ])].sort();
+}
+
+// ─── SPOT ─────────────────────────────────────────────────
+function renderSpot(){
+  // Populate filter dropdown
+  const filterSel=document.getElementById('spot-filter-coin');
+  const currentFilter=filterSel?filterSel.value:'';
+  const allCoins=[...new Set(spots.map(s=>s.coin))].sort();
+  if(filterSel){
+    filterSel.innerHTML='<option value="">Alle Coins</option>'+allCoins.map(c=>`<option value="${c}"${c===currentFilter?' selected':''}>${c}</option>`).join('');
+  }
+  const filteredSpots=currentFilter?spots.filter(s=>s.coin===currentFilter):spots;
+
+  const tb=document.getElementById('spot-tbody');
+  if(!filteredSpots.length){tb.innerHTML='<tr><td colspan="12" style="text-align:center;padding:28px;color:var(--text3)">'+(currentFilter?'Keine Einträge für '+currentFilter:'Noch keine Einträge.')+'</td></tr>';
+  }else{
+    tb.innerHTML=filteredSpots.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(s=>{
+      const isSell=s.type==='sell';
+      const curEur=getPriceEur(s.coin);
+      const curVal=s.amount*curEur;
+      const priceEur=s.priceEur||0;
+      const eurPerCoin=s.amount>0?priceEur/s.amount:0;
+      let pnl=0,pct='0.0';
+      if(!isSell){pnl=curVal-priceEur;pct=priceEur>0?(pnl/priceEur*100).toFixed(1):'0.0';}
+      return`<tr>
+        <td>${isSell?'<span class="tsell">VERKAUF</span>':'<span class="tbuy">KAUF</span>'}</td>
+        <td><strong style="font-weight:500">${s.coin}</strong></td>
+        <td>${fN(s.amount,6)}</td>
+        <td>${fE(priceEur)}</td>
+        <td>${isSell?'–':'<strong>'+fEprice(curEur)+'</strong>'}</td>
+        <td>${isSell?'–':fE(curVal)}</td>
+        <td>${isSell?'–':'<span class="'+pc(pnl)+'">'+sgn(pnl)+fE(pnl)+'</span>'}</td>
+        <td>${isSell?'–':'<span class="'+pc(pnl)+'">'+sgn(pnl)+pct+'%</span>'}</td>
+        <td>${s.exchange||'–'}</td><td>${s.date}</td>
+        <td style="color:var(--text3)">${s.note||''}</td>
+        <td style="display:flex;gap:4px;padding:5px 4px">
+          <button class="btn bte btn-square" onclick="openSpotModal(${s.id})" title="Bearbeiten">✎</button>
+          <button class="btn btnd btn-square" onclick="delSpot(${s.id})" title="Löschen">✕</button>
+        </td></tr>`;
+    }).join('');
+  }
+  // Realized
+  const real=fifoRealized();
+  const totReal=real.reduce((a,r)=>a+r.gain,0);
+  document.getElementById('spot-real-badge').innerHTML=real.length?`<span class="badge ${totReal>=0?'bg':'br'}">${sgn(totReal)}${fE(totReal)}</span>`:'';
+  if(!real.length){document.getElementById('spot-real').innerHTML='<div class="es">Noch keine Verkäufe</div>';return;}
+  document.getElementById('spot-real').innerHTML=`<div class="tw"><table><thead><tr><th>Coin</th><th>Stück</th><th>Kauf</th><th>Verkauf</th><th>Tage</th><th>Einkauf €/Coin</th><th>Verkauf €/Coin</th><th>Gewinn €</th><th>Status</th></tr></thead><tbody>${real.map(r=>`<tr><td>${r.coin}</td><td>${fN(r.amount,6)}</td><td>${r.buyDate}</td><td>${r.sellDate}</td><td>${Math.floor(r.holdDays)}</td><td>${fEprice(r.buyPriceEur)}</td><td>${fEprice(r.sellPriceEur)}</td><td class="${pc(r.gain)}">${sgn(r.gain)}${fE(r.gain)}</td><td>${r.taxFree?'<span class="badge bg">Steuerfrei §23</span>':'<span class="badge ba">§23 Stpfl.</span>'}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// ─── PERPS ────────────────────────────────────────────────
+function renderPerps(){
+  const tb=document.getElementById('perp-tbody');
+  if(!perps.length){tb.innerHTML='<tr><td colspan="12" style="text-align:center;padding:28px;color:var(--text3)">Noch keine offenen Kontrakte.</td></tr>';
+  }else{
+    tb.innerHTML=perps.map(p=>{
+      const{cur,pnl,roe,liq,lev}=perpPnl(p);
+      const danger=p.dir==='long'?cur<liq*1.1:cur>liq*0.9;
+      return`<tr>
+        <td><strong>${p.coin}</strong></td>
+        <td><span class="${p.dir==='long'?'tl':'ts'}">${p.dir.toUpperCase()}</span></td>
+        <td>${fEprice(p.entry)}</td><td><strong>${fEprice(cur)}</strong></td><td>${fE(p.margin)}</td><td>${lev.toFixed(1)}x</td>
+        <td style="color:${danger?'var(--red)':'var(--text2)'}">${fEprice(liq)}${danger?' ⚠':''}</td>
+        <td class="${pc(pnl)}">${sgn(pnl)}${fE(pnl)}</td><td class="${pc(roe)}">${sgn(roe)}${roe.toFixed(1)}%</td>
+        <td>${p.exchange||'–'}</td><td style="color:var(--text3)">${p.note||''}</td>
+        <td style="display:flex;gap:4px;padding:5px 4px">
+          <button class="btn bte btn-square" onclick="openPerpModal(${p.id})" title="Bearbeiten">✎</button>
+          <button class="btn btnd btn-square" onclick="delPerp(${p.id})" title="Löschen">✕</button>
+        </td></tr>`;
+    }).join('');
+  }
+  const totR=perpReal.reduce((a,r)=>a+r.pnl,0);
+  document.getElementById('perp-real-badge').innerHTML=perpReal.length?`<span class="badge ${totR>=0?'bg':'br'}">${sgn(totR)}${fE(totR)}</span>`:'';
+  if(!perpReal.length){document.getElementById('perp-real').innerHTML='<div class="es">Noch keine geschlossenen Positionen</div>';return;}
+  document.getElementById('perp-real').innerHTML=`<div class="tw"><table><thead><tr><th>Coin</th><th>Dir.</th><th>Entry €</th><th>Schließ €</th><th>Stück</th><th>Margin €</th><th>PnL €</th><th>ROE%</th><th>Datum</th><th></th></tr></thead><tbody>${perpReal.map(r=>`<tr><td>${r.coin}</td><td><span class="${r.dir==='long'?'tl':'ts'}">${r.dir.toUpperCase()}</span></td><td>${fE(r.entryEur)}</td><td>${fE(r.closeEur)}</td><td>${fN(r.size,4)}</td><td>${fE(r.margin)}</td><td class="${pc(r.pnl)}">${sgn(r.pnl)}${fE(r.pnl)}</td><td class="${pc(r.roe)}">${sgn(r.roe)}${r.roe.toFixed(1)}%</td><td>${r.date||'–'}</td><td style="display:flex;gap:4px;padding:5px 4px"><button class="btn bte btn-square" onclick="editPerpReal(${r.id})" title="Bearbeiten">✎</button><button class="btn btnd btn-square" onclick="delPerpReal(${r.id})" title="Löschen">✕</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// ─── STEUER ───────────────────────────────────────────────
+function renderSteuer(){
+  const now=new Date();
+  const real=fifoRealized();
+  const taxGains=real.filter(r=>!r.taxFree&&r.gain>0).reduce((a,r)=>a+r.gain,0);
+  const taxLoss=Math.abs(real.filter(r=>!r.taxFree&&r.gain<0).reduce((a,r)=>a+r.gain,0));
+  const freeGains=real.filter(r=>r.taxFree&&r.gain>0).reduce((a,r)=>a+r.gain,0);
+  const afterCurr=Math.max(0,taxGains-taxLoss);
+  const carrySpot=cfg.lossSpot||0;
+  const netSpot=Math.max(0,afterCurr-carrySpot);
+  const remSpot=Math.max(0,carrySpot-afterCurr);
+  const spotTax=netSpot*(cfg.spotTax||0)/100;
+
+  const pGains=perpReal.filter(r=>r.pnl>0).reduce((a,r)=>a+r.pnl,0);
+  const pLoss=Math.abs(perpReal.filter(r=>r.pnl<0).reduce((a,r)=>a+r.pnl,0));
+  const pAfterCurr=Math.max(0,pGains-pLoss);
+  const carryPerp=cfg.lossPerp||0;
+  const netPerp=Math.max(0,pAfterCurr-carryPerp);
+  const remPerp=Math.max(0,carryPerp-pAfterCurr);
+  const perpTax=netPerp*(cfg.perpTax||26.375)/100;
+
+  document.getElementById('tax-spot-m').innerHTML=`
+    <div class="metric"><div class="metric-label">Stpfl. Gewinne</div><div class="metric-value">${fE(taxGains)}</div><div class="metric-sub">Vor Verlustverrechnung</div></div>
+    <div class="metric"><div class="metric-label">Steuerfreie Gewinne</div><div class="metric-value" style="color:var(--green)">${fE(freeGains)}</div><div class="metric-sub">>1 Jahr gehalten</div></div>
+    <div class="metric"><div class="metric-label">Lfd. Verluste</div><div class="metric-value" style="color:var(--red)">-${fE(taxLoss)}</div><div class="metric-sub">Zuerst verrechnet</div></div>
+    <div class="metric"><div class="metric-label">Zu versteuern</div><div class="metric-value">${fE(netSpot)}</div><div class="metric-sub">Nach Verlustverrechnung</div></div>
+    <div class="metric"><div class="metric-label">Est. Steuerlast</div><div class="metric-value" style="color:var(--red)">${fE(spotTax)}</div><div class="metric-sub">${cfg.spotTax||0}% Steuersatz</div></div>`;
+
+  document.getElementById('tax-perp-m').innerHTML=`
+    <div class="metric"><div class="metric-label">Real. Gewinne</div><div class="metric-value">${fE(pGains)}</div><div class="metric-sub">Alle §20 Erträge</div></div>
+    <div class="metric"><div class="metric-label">Lfd. Verluste</div><div class="metric-value" style="color:var(--red)">-${fE(pLoss)}</div><div class="metric-sub">Zuerst verrechnet</div></div>
+    <div class="metric"><div class="metric-label">Zu versteuern</div><div class="metric-value">${fE(netPerp)}</div><div class="metric-sub">Nach Verlustverrechnung</div></div>
+    <div class="metric"><div class="metric-label">Est. Steuerlast</div><div class="metric-value" style="color:var(--red)">${fE(perpTax)}</div><div class="metric-sub">${cfg.perpTax||26.375}% KESt</div></div>`;
+
+  document.getElementById('tax-carry').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="background:var(--bg2);border-radius:var(--radius);padding:14px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:10px;padding-bottom:8px;border-bottom:.5px solid var(--border)">§23 EStG – Spot Verlustvortrag</div>
+      <div style="font-size:20px;font-weight:500;color:var(--amber);margin-bottom:6px">${fE(remSpot)}</div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.7">Eingetragen: ${fE(carrySpot)}<br>Lfd. Verluste: ${fE(taxLoss)}<br>Verrechnet: ${fE(Math.min(afterCurr,carrySpot))}</div>
+      <div class="pb" style="margin-top:8px"><div class="pf" style="width:${carrySpot>0?Math.min(100,(Math.min(afterCurr,carrySpot)/carrySpot*100)):0}%;background:var(--amber)"></div></div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;font-style:italic">Reihenfolge: Lfd. Verluste → Verlustvortrag</div>
+    </div>
+    <div style="background:var(--bg2);border-radius:var(--radius);padding:14px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:10px;padding-bottom:8px;border-bottom:.5px solid var(--border)">§20 EStG – Perpetual Verlustvortrag</div>
+      <div style="font-size:20px;font-weight:500;color:var(--amber);margin-bottom:6px">${fE(remPerp)}</div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.7">Eingetragen: ${fE(carryPerp)}<br>Lfd. Verluste: ${fE(pLoss)}<br>Verrechnet: ${fE(Math.min(pAfterCurr,carryPerp))}</div>
+      <div class="pb" style="margin-top:8px"><div class="pf" style="width:${carryPerp>0?Math.min(100,(Math.min(pAfterCurr,carryPerp)/carryPerp*100)):0}%;background:var(--amber)"></div></div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;font-style:italic">Reihenfolge: Lfd. Verluste → Verlustvortrag</div>
+    </div>
+  </div>`;
+
+  // Spot positions table
+  document.getElementById('tax-spot-t').innerHTML=spots.filter(s=>s.type!=='sell').sort((a,b)=>new Date(a.date)-new Date(b.date)).map(s=>{
+    const fd=new Date(s.date);fd.setFullYear(fd.getFullYear()+1);
+    const days=Math.ceil((fd-now)/86400000);const free=days<=0;
+    const val=s.amount*getPriceEur(s.coin);const pnl=val-(s.priceEur||0);
+    const prog=free?100:Math.max(0,Math.round(((365-days)/365)*100));
+    const badge=free?'<span class="badge bg">✓ Steuerfrei</span>':days<=90?'<span class="badge ba">Bald frei</span>':'<span class="badge bx">Läuft</span>';
+    return`<tr class="${free?'sfree':''}"><td>${s.coin}</td><td>${fN(s.amount,6)}</td><td>${s.date}</td><td>${fE(s.priceEur||0)}</td><td>${fE(val)}</td><td class="${pc(pnl)}">${sgn(pnl)}${fE(pnl)}</td><td>${badge}</td><td>${fd.toISOString().split('T')[0]}</td><td>${free?'✓':days}</td><td><div class="pb"><div class="pf" style="width:${prog}%;background:${free?'var(--green)':'var(--amber)'}"></div></div></td></tr>`;
+  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:28px;color:var(--text3)">Keine Käufe</td></tr>';
+
+  // Realized spot
+  if(!real.length){document.getElementById('tax-spot-real').innerHTML='<div class="es">Noch keine Verkäufe</div>';}
+  else{document.getElementById('tax-spot-real').innerHTML=`<div class="tw"><table><thead><tr><th>Coin</th><th>Stück</th><th>Kauf</th><th>Verkauf</th><th>Tage</th><th>Kosten €</th><th>Erlös €</th><th>Gewinn €</th><th>Status</th><th>Est. Steuer</th></tr></thead><tbody>${real.map(r=>{const t=r.taxFree||r.gain<=0?0:r.gain*(cfg.spotTax||0)/100;return`<tr><td>${r.coin}</td><td>${fN(r.amount,6)}</td><td>${r.buyDate}</td><td>${r.sellDate}</td><td>${Math.floor(r.holdDays)}</td><td>${fE(r.cost)}</td><td>${fE(r.proceeds)}</td><td class="${pc(r.gain)}">${sgn(r.gain)}${fE(r.gain)}</td><td>${r.taxFree?'<span class="badge bg">Steuerfrei</span>':'<span class="badge ba">§23 Stpfl.</span>'}</td><td style="color:var(--red)">${t>0?fE(t):'–'}</td></tr>`;}).join('')}</tbody></table></div>`;}
+
+  // Realized perp
+  if(!perpReal.length){document.getElementById('tax-perp-real').innerHTML='<div class="es">Noch keine geschlossenen Perps</div>';}
+  else{document.getElementById('tax-perp-real').innerHTML=`<div class="tw"><table><thead><tr><th>Coin</th><th>Dir.</th><th>Entry €</th><th>Schließ €</th><th>PnL €</th><th>Est. Steuer</th><th>Datum</th></tr></thead><tbody>${perpReal.map(r=>{const t=r.pnl>0?r.pnl*(cfg.perpTax||26.375)/100:0;return`<tr><td>${r.coin}</td><td><span class="${r.dir==='long'?'tl':'ts'}">${r.dir.toUpperCase()}</span></td><td>${fE(r.entryEur)}</td><td>${fE(r.closeEur)}</td><td class="${pc(r.pnl)}">${sgn(r.pnl)}${fE(r.pnl)}</td><td style="color:var(--red)">${t>0?fE(t):'–'}</td><td>${r.date||'–'}</td></tr>`;}).join('')}</tbody></table></div>`;}
+}
+
+// ─── CHARTS ───────────────────────────────────────────────
+function renderCharts(){
+  try{
+    const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+    const tc=dark?'rgba(255,255,255,.5)':'rgba(0,0,0,.45)';
+    const gc=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.06)';
+    const COLS=['#5DCAA5','#85B7EB','#EF9F27','#F0997B','#AFA9EC','#97C459','#ED93B1','#FAC775'];
+    const h=fifoHoldings();const coins=Object.values(h).filter(x=>x.amount>1e-10);
+    if(charts.alloc)charts.alloc.destroy();
+    const e1=document.getElementById('ch-alloc');
+    if(e1&&coins.length){charts.alloc=new Chart(e1.getContext('2d'),{type:'doughnut',data:{labels:coins.map(c=>c.coin),datasets:[{data:coins.map(c=>+(c.amount*getPriceEur(c.coin)).toFixed(2)),backgroundColor:COLS,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:tc,font:{size:11},boxWidth:10}}}}});}
+    if(charts.pnl)charts.pnl.destroy();
+    const e2=document.getElementById('ch-pnl');
+    if(e2&&coins.length){const pnls=coins.map(c=>+(c.amount*getPriceEur(c.coin)-c.costEur).toFixed(2));charts.pnl=new Chart(e2.getContext('2d'),{type:'bar',data:{labels:coins.map(c=>c.coin),datasets:[{label:'PnL €',data:pnls,backgroundColor:pnls.map(v=>v>=0?'#5DCAA5':'#F0997B'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:11}},grid:{display:false}},y:{ticks:{color:tc,font:{size:11},callback:v=>'€'+Number(v).toLocaleString()},grid:{color:gc}}}}});}
+    if(charts.perps)charts.perps.destroy();
+    const e3=document.getElementById('ch-perp');
+    if(e3&&perps.length){const pnls=perps.map(p=>+perpPnl(p).pnl.toFixed(2));charts.perps=new Chart(e3.getContext('2d'),{type:'bar',data:{labels:perps.map(p=>p.coin+' '+p.dir.toUpperCase()),datasets:[{label:'Margin €',data:perps.map(p=>p.margin),backgroundColor:'#85B7EB',borderRadius:4},{label:'Unreal. PnL €',data:pnls,backgroundColor:pnls.map(v=>v>=0?'#5DCAA5':'#F0997B'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,font:{size:11},boxWidth:10}}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false}},y:{ticks:{color:tc,font:{size:11},callback:v=>'€'+Number(v).toLocaleString()},grid:{color:gc}}}}});}
+    else if(e3){e3.parentElement.innerHTML='<div class="es">Keine Perpetual-Daten</div>';}
+  }catch(e){
+    console.error('Charts Error:',e);
+    toast('⚠ Fehler beim Laden der Charts');
+  }
+}
+
+// ─── DEPOSITS ─────────────────────────────────────────────
+function renderDeposits(){
+  const deps=deposits.filter(d=>d.type==='deposit'||!d.type);
+  const wdrs=deposits.filter(d=>d.type==='withdrawal');
+  const totIn=deps.reduce((a,d)=>a+d.amount,0);
+  const totOut=wdrs.reduce((a,d)=>a+d.amount,0);
+  const exMap={};deposits.forEach(d=>{if(!exMap[d.to])exMap[d.to]=0;exMap[d.to]+=d.type==='withdrawal'?-d.amount:d.amount;});
+  document.getElementById('dep-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Gesamt Einzahlungen</div><div class="metric-value">${fE(totIn)}</div><div class="metric-sub">${deps.length} Einzahlungen</div></div>
+    <div class="metric"><div class="metric-label">Gesamt Auszahlungen</div><div class="metric-value" style="color:var(--red)">${fE(totOut)}</div><div class="metric-sub">${wdrs.length} Auszahlungen</div></div>
+    <div class="metric"><div class="metric-label">Netto</div><div class="metric-value"><span class="${pc(totIn-totOut)}">${fE(totIn-totOut)}</span></div><div class="metric-sub">Ein – Aus</div></div>
+    ${Object.entries(exMap).map(([ex,amt])=>`<div class="metric"><div class="metric-label">${ex}</div><div class="metric-value ${pc(amt)}">${fE(amt)}</div><div class="metric-sub">Netto</div></div>`).join('')}`;
+  const tb=document.getElementById('dep-tbody');
+  if(!deposits.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--text3)">Noch keine Einträge</td></tr>';}
+  else{tb.innerHTML=deposits.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(d=>`<tr>
+    <td>${d.date}</td>
+    <td>${d.type==='withdrawal'?'<span class="tsell">Auszahlung</span>':'<span class="tbuy">Einzahlung</span>'}</td>
+    <td><strong>${fE(d.amount)}</strong></td>
+    <td>${d.from}</td><td><span class="badge bb">${d.to}</span></td>
+    <td style="color:var(--text3)">${d.note||''}</td>
+    <td style="display:flex;gap:4px;padding:5px 4px">
+      <button class="btn bte btn-square" onclick="openDepositModal(${d.id})" title="Bearbeiten">✎</button>
+      <button class="btn btnd btn-square" onclick="delDep(${d.id})" title="Löschen">✕</button>
+    </td></tr>`).join('');}
+  const exDiv=document.getElementById('dep-byex');
+  const tot=totIn+totOut;
+  exDiv.innerHTML=Object.keys(exMap).length?Object.entries(exMap).sort((a,b)=>b[1]-a[1]).map(([ex,amt])=>{
+    const pct=totIn>0?Math.abs(amt/totIn*100).toFixed(1):'0';
+    return`<div style="padding:7px 0;border-bottom:.5px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-weight:500">${ex}</span><span>${fE(amt)} <span style="color:var(--text3);font-size:11px">${pct}%</span></span></div><div class="pb"><div class="pf" style="width:${pct}%;background:var(--btx)"></div></div></div>`;
+  }).join(''):'<div class="es">Keine Daten</div>';
+}
+
+// ─── SETTINGS ─────────────────────────────────────────────
+function renderSettings(){
+  document.getElementById('set-stax').value=cfg.spotTax||'';
+  document.getElementById('set-ptax').value=cfg.perpTax||'';
+  document.getElementById('set-lspot').value=cfg.lossSpot||0;
+  document.getElementById('set-lperp').value=cfg.lossPerp||0;
+}
+function saveSettings(){
+  cfg.spotTax=parseFloat(document.getElementById('set-stax').value)||0;
+  cfg.perpTax=parseFloat(document.getElementById('set-ptax').value)||0;
+  cfg.lossSpot=parseFloat(document.getElementById('set-lspot').value)||0;
+  cfg.lossPerp=parseFloat(document.getElementById('set-lperp').value)||0;
+  save();toast('Einstellungen gespeichert ✓');
+}
+
+// ─── SPOT MODAL ───────────────────────────────────────────
+let sTab='buy',sEditId=null;
+
+async function calcSpotUsd(){
+  const eur=parseFloat(document.getElementById('s-eur').value);
+  const date=document.getElementById('s-date').value;
+  const info=document.getElementById('s-rate-info');
+  if(!eur||!date){info.textContent='';return;}
+  info.textContent='Lade historischen Kurs…';
+  const rate=await fetchHistEurUsd(date);
+  info.innerHTML=`<span style="color:var(--green)">✓ Historischer EUR/USD am ${date}: <strong>${rate.toFixed(4)}</strong> → ${fE(eur)} = $${(eur*rate).toFixed(2)}</span>`;
+  document.getElementById('s-eur').dataset.usd=(eur*rate).toFixed(2);
+  document.getElementById('s-eur').dataset.rate=rate;
+}
+
+function openSpotModal(id=null){
+  sEditId=id;
+  const s=id?spots.find(x=>x.id===id):null;
+  document.getElementById('mo-spot-title').textContent=id?'Eintrag bearbeiten':'Spot Eintrag';
+  document.getElementById('s-id').value=id||'';
+  if(s){
+    document.getElementById('s-coin').value=s.coin||'';
+    document.getElementById('s-amount').value=s.amount||'';
+    document.getElementById('s-eur').value=s.priceEur||'';
+    document.getElementById('s-date').value=s.date||'';
+    document.getElementById('s-exch').value=s.exchange||'';
+    document.getElementById('s-note').value=s.note||'';
+    document.getElementById('s-rate-info').innerHTML=s.priceEur&&s.priceUsd?`<span style="color:var(--text3)">${fE(s.priceEur)} → $${(+s.priceUsd).toFixed(2)}</span>`:'';
+    setSpotTab(s.type==='sell'?'sell':'buy');
+  }else{
+    ['s-coin','s-amount','s-eur','s-exch','s-note'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('s-date').value=new Date().toISOString().split('T')[0];
+    document.getElementById('s-rate-info').textContent='';
+    setSpotTab('buy');
+  }
+  document.getElementById('mo-spot').classList.add('open');
+}
+
+function setSpotTab(tab){
+  sTab=tab;
+  document.getElementById('stab-buy').classList.toggle('active',tab==='buy');
+  document.getElementById('stab-sell').classList.toggle('active',tab==='sell');
+  document.getElementById('s-plabel').textContent=tab==='sell'?'Gesamterlös EUR * (was du bekommen hast)':'Gesamtpreis EUR * (was du gezahlt hast)';
+  document.getElementById('s-dlabel').textContent=tab==='sell'?'Verkaufsdatum *':'Kaufdatum *';
+  document.getElementById('s-sell-info').style.display=tab==='sell'?'block':'none';
+}
+
+async function saveSpot(){
+  const coin=document.getElementById('s-coin').value.trim().toUpperCase();
+  const amount=parseFloat(document.getElementById('s-amount').value);
+  const priceEur=parseFloat(document.getElementById('s-eur').value);
+  const date=document.getElementById('s-date').value;
+  const exchange=document.getElementById('s-exch').value.trim();
+  const note=document.getElementById('s-note').value.trim();
+  if(!coin||!amount||!priceEur||!date){toast('Bitte alle Pflichtfelder ausfüllen');return;}
+  const rate=await fetchHistEurUsd(date);
+  const priceUsd=priceEur*rate;
+  const id=sEditId||Date.now();
+  const entry={id,coin,amount,priceEur,priceUsd,date,exchange,note,type:sTab==='sell'?'sell':'buy'};
+  if(sEditId){const i=spots.findIndex(s=>s.id===sEditId);if(i>=0)spots[i]=entry;}
+  else spots.push(entry);
+  save();closeMo('mo-spot');renderSpot();
+  toast((sEditId?'Aktualisiert':'Gespeichert')+' ✓');sEditId=null;
+}
+
+function delSpot(id){if(!confirm('Löschen?'))return;spots=spots.filter(s=>s.id!==id);save();renderSpot();}
+
+// ─── PERP MODAL ───────────────────────────────────────────
+let pTab='open',pEditId=null;
+
+function calcPerpUsdToEur(){
+  const entryUsd=parseFloat(document.getElementById('p-entry-usd').value)||0;
+  const marginUsd=parseFloat(document.getElementById('p-margin-usd').value)||0;
+  
+  const entryDisplay=document.getElementById('p-entry-eur-display');
+  const marginDisplay=document.getElementById('p-margin-eur-display');
+  
+  if(entryUsd>0){
+    const entryEur=entryUsd/eurUsd;
+    entryDisplay.textContent=fEprice(entryEur);
+    entryDisplay.dataset.eurVal=entryEur;
+  }else{
+    entryDisplay.textContent='–';
+    entryDisplay.dataset.eurVal='';
+  }
+  
+  if(marginUsd>0){
+    const marginEur=marginUsd/eurUsd;
+    marginDisplay.textContent=fEprice(marginEur);
+    marginDisplay.dataset.eurVal=marginEur;
+  }else{
+    marginDisplay.textContent='–';
+    marginDisplay.dataset.eurVal='';
+  }
+  
+  calcPerpLeverage();
+}
+
+function calcPerpLeverage(){
+  const entryEur=parseFloat(document.getElementById('p-entry-eur-display').dataset.eurVal)||0;
+  const marginEur=parseFloat(document.getElementById('p-margin-eur-display').dataset.eurVal)||0;
+  const size=parseFloat(document.getElementById('p-size').value)||0;
+  const disp=document.getElementById('p-lev-display');
+  if(entryEur>0&&marginEur>0&&size>0){
+    const lev=(size*entryEur)/marginEur;
+    disp.textContent=lev.toFixed(2)+'x';
+    disp.style.color=lev>20?'var(--red)':lev>10?'var(--amber)':'var(--green)';
+  }else{
+    disp.textContent='–';
+    disp.style.color='var(--text)';
+  }
+}
+
+function calcClosePriceEur(){
+  const usd=parseFloat(document.getElementById('p-close-price-usd').value)||0;
+  const disp=document.getElementById('p-close-price-eur-display');
+  if(usd>0){
+    const eur=usd/eurUsd;
+    disp.textContent=fEprice(eur);
+    disp.dataset.eurVal=eur;
+  }else{
+    disp.textContent='–';
+    disp.dataset.eurVal='';
+  }
+}
+
+function openPerpModal(id=null){
+  pEditId=id;
+  const p=id?perps.find(x=>x.id===id):null;
+  document.getElementById('mo-perp-title').textContent=id?'Position bearbeiten':'Perpetual Eintrag';
+  document.getElementById('p-id').value=id||'';
+  const sel=document.getElementById('p-close-sel');
+  sel.innerHTML=perps.map(x=>`<option value="${x.id}">${x.coin} ${x.dir.toUpperCase()} @ ${fEprice(x.entry)} (${x.size} Coins)</option>`).join('');
+  if(p){
+    document.getElementById('p-coin').value=p.coin||'';
+    document.getElementById('p-dir').value=p.dir||'long';
+    // Convert stored EUR back to USD for display
+    const entryUsd=p.entry*eurUsd;
+    const marginUsd=p.margin*eurUsd;
+    document.getElementById('p-entry-usd').value=entryUsd||'';
+    document.getElementById('p-margin-usd').value=marginUsd||'';
+    document.getElementById('p-entry-eur-display').textContent=fEprice(p.entry||0);
+    document.getElementById('p-entry-eur-display').dataset.eurVal=p.entry||0;
+    document.getElementById('p-margin-eur-display').textContent=fEprice(p.margin||0);
+    document.getElementById('p-margin-eur-display').dataset.eurVal=p.margin||0;
+    document.getElementById('p-size').value=p.size||'';
+    document.getElementById('p-exch').value=p.exchange||'';
+    document.getElementById('p-note').value=p.note||'';
+    calcPerpLeverage();
+    setPerpTab('open');
+  }else{
+    ['p-coin','p-entry-usd','p-margin-usd','p-size','p-exch','p-note'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('p-entry-eur-display').textContent='–';
+    document.getElementById('p-entry-eur-display').dataset.eurVal='';
+    document.getElementById('p-margin-eur-display').textContent='–';
+    document.getElementById('p-margin-eur-display').dataset.eurVal='';
+    document.getElementById('p-lev-display').textContent='–';
+    document.getElementById('p-close-date').value=new Date().toISOString().split('T')[0];
+    setPerpTab('open');
+  }
+  document.getElementById('mo-perp').classList.add('open');
+}
+
+function setPerpTab(tab){
+  pTab=tab;
+  document.getElementById('ptab-open').classList.toggle('active',tab==='open');
+  document.getElementById('ptab-close').classList.toggle('active',tab==='close');
+  document.getElementById('p-open-form').style.display=tab==='open'?'block':'none';
+  document.getElementById('p-close-form').style.display=tab==='close'?'block':'none';
+}
+
+function savePerp(){
+  if(pTab==='open'){
+    const coin=document.getElementById('p-coin').value.trim().toUpperCase();
+    const dir=document.getElementById('p-dir').value;
+    const entryUsd=parseFloat(document.getElementById('p-entry-usd').value);
+    const marginUsd=parseFloat(document.getElementById('p-margin-usd').value);
+    const size=parseFloat(document.getElementById('p-size').value);
+    const exchange=document.getElementById('p-exch').value.trim();
+    const note=document.getElementById('p-note').value.trim();
+    if(!coin||!entryUsd||!marginUsd||!size){toast('Bitte alle Pflichtfelder ausfüllen');return;}
+    
+    // Convert USD to EUR for storage
+    const entryEur=entryUsd/eurUsd;
+    const marginEur=marginUsd/eurUsd;
+    const leverage=(size*entryEur)/marginEur; // calculated from converted EUR
+    
+    const id=pEditId||Date.now();
+    const e={id,coin,dir,entry:entryEur,margin:marginEur,leverage,size,exchange,note};
+    if(pEditId){const i=perps.findIndex(p=>p.id===pEditId);if(i>=0)perps[i]=e;}
+    else perps.push(e);
+    save();closeMo('mo-perp');renderPerps();
+    toast((pEditId?'Aktualisiert':'Gespeichert')+' ✓');pEditId=null;
+  }else{
+    const pidStr=document.getElementById('p-close-sel').value;
+    const closeUsd=parseFloat(document.getElementById('p-close-price-usd').value);
+    const closePriceEurDisp=document.getElementById('p-close-price-eur-display');
+    const closeEur=parseFloat(closePriceEurDisp.dataset.eurVal)||closeUsd/eurUsd;
+    const closeDateVal=document.getElementById('p-close-date').value||new Date().toISOString().split('T')[0];
+    let cSize=parseFloat(document.getElementById('p-close-size').value);
+    if(!closeUsd){toast('Bitte Schließpreis (USD) eintragen');return;}
+    
+    // Check if editing a closed position
+    const editPerpRealId=localStorage.getItem('_edit_perp_real_id');
+    if(editPerpRealId){
+      // Edit existing closed position
+      const idx=perpReal.findIndex(r=>r.id===parseInt(editPerpRealId));
+      if(idx>=0){
+        const r=perpReal[idx];
+        const sz=isNaN(cSize)||cSize<=0?r.size:cSize;
+        const pnl=r.dir==='long'?(closeEur-r.entryEur)*sz:(r.entryEur-closeEur)*sz;
+        perpReal[idx]={...r,closeEur,closeUsd,size:sz,pnl,roe:(pnl/(r.margin||1))*100,date:closeDateVal};
+      }
+      localStorage.removeItem('_edit_perp_real_id');
+      save();closeMo('mo-perp');renderPerps();
+      toast('Position aktualisiert ✓');
+      return;
+    }
+    
+    // Close new position
+    const pid=parseInt(pidStr);
+    const pos=perps.find(p=>p.id===pid);if(!pos){toast('Position nicht gefunden');return;}
+    const sz=isNaN(cSize)||cSize<=0?pos.size:Math.min(cSize,pos.size);
+    const pnl=pos.dir==='long'?(closeEur-pos.entry)*sz:(pos.entry-closeEur)*sz;
+    const mUsed=(sz/pos.size)*pos.margin;
+    perpReal.push({id:Date.now(),coin:pos.coin,dir:pos.dir,entryEur:pos.entry,closeEur,closeUsd,size:sz,margin:mUsed,leverage:pos.leverage,pnl,roe:(pnl/mUsed)*100,date:closeDateVal,exchange:pos.exchange||''});
+    if(Math.abs(sz-pos.size)<1e-10)perps=perps.filter(p=>p.id!==pid);
+    else{const i=perps.findIndex(p=>p.id===pid);if(i>=0){perps[i].size-=sz;perps[i].margin-=mUsed;}}
+    save();closeMo('mo-perp');renderPerps();
+    toast(`Position geschlossen: ${sgn(pnl)}${fE(pnl)} ✓`);
+  }
+}
+
+function delPerp(id){if(!confirm('Löschen?'))return;perps=perps.filter(p=>p.id!==id);save();renderPerps();}
+
+function editPerpReal(id){
+  const real=perpReal.find(r=>r.id===id);
+  if(!real){toast('Position nicht gefunden');return;}
+  // Prefill the close form with the data
+  pEditId=null;
+  document.getElementById('mo-perp-title').textContent='Geschlossene Position bearbeiten';
+  document.getElementById('p-id').value='';
+  // Set position to the one we're editing
+  const posKey='_edit_perp_real_'+id;
+  localStorage.setItem(posKey, JSON.stringify(real));
+  // Open close form with pre-filled data
+  const closeUsd=real.closeUsd||real.closeEur*eurUsd;
+  document.getElementById('p-close-price-usd').value=closeUsd;
+  document.getElementById('p-close-price-eur-display').textContent=fEprice(real.closeEur);
+  document.getElementById('p-close-price-eur-display').dataset.eurVal=real.closeEur;
+  document.getElementById('p-close-size').value=real.size;
+  document.getElementById('p-close-date').value=real.date||new Date().toISOString().split('T')[0];
+  // Create fake position selector - just show the coin
+  const sel=document.getElementById('p-close-sel');
+  sel.innerHTML=`<option value="${posKey}" selected>${real.coin} ${real.dir.toUpperCase()}</option>`;
+  // Store the id so we know to update instead of create
+  localStorage.setItem('_edit_perp_real_id', id);
+  setPerpTab('close');
+  document.getElementById('mo-perp').classList.add('open');
+}
+
+function delPerpReal(id){
+  if(!confirm('Löschen? Position wird wieder als offen hinzugefügt.'))return;
+  const real=perpReal.find(r=>r.id===id);
+  if(!real){toast('Position nicht gefunden');return;}
+  // Remove from closed
+  perpReal=perpReal.filter(r=>r.id!==id);
+  // Add back as open position
+  const openPos={
+    id:Date.now(),
+    coin:real.coin,
+    dir:real.dir,
+    entry:real.entryEur,
+    margin:real.margin,
+    leverage:real.leverage,
+    size:real.size,
+    exchange:real.exchange||'',
+    note:real.note||''
+  };
+  perps.push(openPos);
+  save();
+  renderPerps();
+  toast('Position wiederhergestellt ✓');
+}
+
+// ─── DEPOSIT MODAL ────────────────────────────────────────
+let depEditId=null;
+
+function openDepositModal(id=null){
+  depEditId=id;
+  const d=id?deposits.find(x=>x.id===id):null;
+  document.getElementById('mo-dep-title').textContent=id?'Eintrag bearbeiten':'Einzahlung eintragen';
+  document.getElementById('dep-id').value=id||'';
+  if(d){
+    document.getElementById('dep-type').value=d.type||'deposit';
+    document.getElementById('dep-amt').value=d.amount||'';
+    document.getElementById('dep-date').value=d.date||'';
+    document.getElementById('dep-from').value=d.from||'';
+    document.getElementById('dep-to').value=d.to||'';
+    document.getElementById('dep-note').value=d.note||'';
+  }else{
+    ['dep-amt','dep-from','dep-to','dep-note'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('dep-type').value='deposit';
+    document.getElementById('dep-date').value=new Date().toISOString().split('T')[0];
+  }
+  document.getElementById('mo-dep').classList.add('open');
+}
+
+function saveDeposit(){
+  const amount=parseFloat(document.getElementById('dep-amt').value);
+  const date=document.getElementById('dep-date').value;
+  const from=document.getElementById('dep-from').value.trim();
+  const to=document.getElementById('dep-to').value.trim();
+  const note=document.getElementById('dep-note').value.trim();
+  const type=document.getElementById('dep-type').value;
+  if(!amount||!date||!from||!to){toast('Bitte alle Pflichtfelder ausfüllen');return;}
+  const id=depEditId||Date.now();
+  const entry={id,type,amount,date,from,to,note};
+  if(depEditId){const i=deposits.findIndex(d=>d.id===id);if(i>=0)deposits[i]=entry;}
+  else deposits.push(entry);
+  save();closeMo('mo-dep');renderDeposits();
+  toast('Gespeichert ✓');depEditId=null;
+}
+function delDep(id){if(!confirm('Löschen?'))return;deposits=deposits.filter(d=>d.id!==id);save();renderDeposits();}
+
+// ─── CSV EXPORT ───────────────────────────────────────────
+function exportCSV(type){
+  let rows=[],fname='';const now=new Date().toISOString().split('T')[0];
+  if(type==='spot'){fname=`spot_${now}.csv`;rows=[['Typ','Coin','Stück','Kaufpreis €','Live €/Coin','Akt. Wert €','Exchange','Datum','Notiz']];spots.forEach(s=>rows.push([s.type||'buy',s.coin,s.amount,s.priceEur||0,+getPriceEur(s.coin).toFixed(2),+(s.amount*getPriceEur(s.coin)).toFixed(2),s.exchange||'',s.date,s.note||'']));}
+  else if(type==='perps'){fname=`perps_${now}.csv`;rows=[['Symbol','Dir.','Entry €','Live €','Margin €','Leverage','Unreal. PnL €','ROE%','Exchange']];perps.forEach(p=>{const{cur,pnl,roe}=perpPnl(p);rows.push([p.coin,p.dir,p.entry,+cur.toFixed(2),p.margin,p.leverage,+pnl.toFixed(2),+roe.toFixed(2),p.exchange||'']);});}
+  else if(type==='steuer'){fname=`steuer_${now}.csv`;rows=[['Typ','Coin','Stück','Kaufdatum','Verkaufsdatum','Kosten €','Erlös €','Gewinn €','Tage','Steuerfrei']];fifoRealized().forEach(r=>rows.push(['Spot FIFO',r.coin,r.amount,r.buyDate,r.sellDate,+r.cost.toFixed(2),+r.proceeds.toFixed(2),+r.gain.toFixed(2),Math.floor(r.holdDays),r.taxFree?'Ja':'Nein']));perpReal.forEach(r=>rows.push(['Perp §20',r.coin,r.size,r.date,'',r.margin,'',+r.pnl.toFixed(2),'–','Nein']));}
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));a.download=fname;document.body.appendChild(a);a.click();document.body.removeChild(a);toast('CSV heruntergeladen ✓');
+}
+
+function exportPDF(){
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+  const W = doc.internal.pageSize.getWidth();
+  const today = new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const dateStr = new Date().toISOString().split('T')[0];
+
+  // ── Colour palette ──────────────────────────────────────────
+  const GREEN  = [29,158,117];
+  const DARK   = [26,26,26];
+  const GRAY1  = [245,245,243];
+  const GRAY2  = [102,102,102];
+  const RED    = [226,75,74];
+  const AMBER  = [239,159,39];
+  const WHITE  = [255,255,255];
+  const ACCENT = [24,95,165];
+
+  // ── Helpers ─────────────────────────────────────────────────
+  function fe(n){const s=Number(n).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});return s+' EUR';}
+  function fn(n,d=4){return Number(n).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:d});}
+  function sgn(v){return v>=0?'+':'';}
+
+  let y = 0; // current Y cursor
+
+  // ── PAGE HEADER ─────────────────────────────────────────────
+  function drawPageHeader(title, subtitle){
+    // Green top bar
+    doc.setFillColor(29,158,117);
+    doc.rect(0,0,W,18,'F');
+    // Logo left
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(13);
+    doc.setTextColor(255,255,255);
+    doc.text('₿ Portfolio', 12, 12);
+    // Title right
+    doc.setFontSize(9);
+    doc.setFont('helvetica','normal');
+    doc.text(title, W-12, 8, {align:'right'});
+    doc.text(subtitle, W-12, 13.5, {align:'right'});
+    // Date line
+    doc.setFillColor(245,245,243);
+    doc.rect(0,18,W,7,'F');
+    doc.setFontSize(7.5);
+    doc.setTextColor(102,102,102);
+    doc.setFont('helvetica','italic');
+    doc.text(`Erstellt am ${today}  ·  Alle Werte in EUR  ·  Wechselkurs: 1€ = ${eurUsd.toFixed(4)}$`, 12, 22.5);
+    y = 30;
+  }
+
+  // ── SECTION HEADING ─────────────────────────────────────────
+  function sectionHeading(text, color=DARK){
+    doc.setFillColor(color[0],color[1],color[2]);
+    doc.roundedRect(10, y, W-20, 8, 1.5, 1.5, 'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(255,255,255);
+    doc.text(text, 14, y+5.5);
+    y += 12;
+  }
+
+  // ── METRIC ROW ──────────────────────────────────────────────
+  function metricRow(metrics){
+    const cols = metrics.length;
+    const cw = (W-20)/cols;
+    doc.setDrawColor(220,220,220);
+    metrics.forEach((m,i)=>{
+      const x = 10 + i*cw;
+      doc.setFillColor(245,245,243);
+      doc.roundedRect(x+1, y, cw-2, 16, 1.5,1.5,'F');
+      // label
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(6.5);
+      doc.setTextColor(102,102,102);
+      doc.text(m.label, x+cw/2, y+5, {align:'center'});
+      // value
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(10);
+      const col = m.color==='green'?GREEN:m.color==='red'?RED:m.color==='amber'?AMBER:DARK;
+      doc.setTextColor(col[0],col[1],col[2]);
+      doc.text(m.value, x+cw/2, y+12, {align:'center'});
+    });
+    y += 20;
+  }
+
+  function checkPageBreak(needed=30){
+    if(y + needed > 280){doc.addPage();drawPageHeader('₿ Portfolio',today);return true;}
+    return false;
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // PAGE 1 – DASHBOARD
+  // ══════════════════════════════════════════════════════════════
+  drawPageHeader('₿ Portfolio', today);
+
+  // Compute numbers
+  const h = fifoHoldings();
+  const spotValEur = Object.values(h).reduce((a,x)=>a+x.amount*getPriceEur(x.coin),0);
+  const spotCostEur = Object.values(h).reduce((a,x)=>a+x.costEur,0);
+  const spotPnl = spotValEur - spotCostEur;
+  const spotPct = spotCostEur>0?(spotPnl/spotCostEur*100):0;
+  const marginEur = perps.reduce((a,p)=>a+p.margin,0);
+  const perpPnlEur = perps.reduce((a,p)=>a+perpPnl(p).pnl,0);
+  const totalUnreal = spotPnl + perpPnlEur;
+  const total = spotValEur + marginEur + perpPnlEur;
+  const totalInv = spotCostEur + marginEur;
+
+  sectionHeading('Portfolio Übersicht', DARK);
+  metricRow([
+    {label:'Gesamt Portfolio', value:fe(total)},
+    {label:'Gesamt Investiert', value:fe(totalInv)},
+    {label:'Unreal. Spot PnL', value:sgn(spotPnl)+fe(spotPnl), color:spotPnl>=0?'green':'red'},
+    {label:'Unreal. Perp PnL', value:sgn(perpPnlEur)+fe(perpPnlEur), color:perpPnlEur>=0?'green':'red'},
+    {label:'Gesamt Unreal. PnL', value:sgn(totalUnreal)+fe(totalUnreal), color:totalUnreal>=0?'green':'red'},
+  ]);
+
+  y += 2;
+  sectionHeading('Spot Positionen (nach FIFO)', GREEN);
+
+  const spotRows = Object.values(h).filter(x=>x.amount>1e-10).sort((a,b)=>b.amount*getPriceEur(b.coin)-a.amount*getPriceEur(a.coin));
+  doc.autoTable({
+    startY: y,
+    margin:{left:10,right:10},
+    styles:{fontSize:8, cellPadding:2.5, font:'helvetica'},
+    headStyles:{fillColor:GREEN, textColor:WHITE, fontStyle:'bold', fontSize:7.5},
+    alternateRowStyles:{fillColor:GRAY1},
+    columnStyles:{
+      0:{fontStyle:'bold'},
+      3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},
+    },
+    head:[['Coin','Stückzahl','Ø Einkauf €/Coin','Einkauf gesamt €','Live Preis €','Akt. Wert €','PnL €','PnL %']],
+    body: spotRows.map(x=>{
+      const val=x.amount*getPriceEur(x.coin);
+      const pnl=val-x.costEur;
+      const pct=x.costEur>0?(pnl/x.costEur*100):0;
+      const avgCost=x.amount>0?x.costEur/x.amount:0;
+      return[x.coin, fn(x.amount,6), fe(avgCost), fe(x.costEur), fe(getPriceEur(x.coin)), fe(val), sgn(pnl)+fe(pnl), sgn(pct)+pct.toFixed(2)+'%'];
+    }),
+    didParseCell:(d)=>{
+      if(d.section==='body'&&d.column.index===6){
+        const v=parseFloat(d.cell.raw.replace(/[^0-9.,-]/g,'').replace(',','.'));
+        d.cell.styles.textColor = v>=0?GREEN:RED;
+        d.cell.styles.fontStyle='bold';
+      }
+      if(d.section==='body'&&d.column.index===7){
+        d.cell.styles.textColor=d.cell.raw.startsWith('+')?GREEN:RED;
+      }
+    }
+  });
+  y = doc.lastAutoTable.finalY + 6;
+
+  // ══════════════════════════════════════════════════════════════
+  // All Spot Käufe
+  // ══════════════════════════════════════════════════════════════
+  checkPageBreak(40);
+  sectionHeading('Alle Spot-Einträge (Käufe & Verkäufe)', DARK);
+  doc.autoTable({
+    startY:y,
+    margin:{left:10,right:10},
+    styles:{fontSize:7.5, cellPadding:2, font:'helvetica'},
+    headStyles:{fillColor:DARK, textColor:WHITE, fontStyle:'bold', fontSize:7},
+    alternateRowStyles:{fillColor:GRAY1},
+    head:[['Typ','Coin','Stück','Preis gesamt €','Exchange','Datum','Notiz']],
+    body: spots.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).map(s=>[
+      s.type==='sell'?'VERKAUF':'KAUF',
+      s.coin, fn(s.amount,6), fe(s.priceEur||0),
+      s.exchange||'–', s.date, s.note||''
+    ]),
+    didParseCell:(d)=>{
+      if(d.section==='body'&&d.column.index===0){
+        d.cell.styles.textColor=d.cell.raw==='VERKAUF'?RED:GREEN;
+        d.cell.styles.fontStyle='bold';
+      }
+    }
+  });
+  y = doc.lastAutoTable.finalY + 6;
+
+  // ══════════════════════════════════════════════════════════════
+  // PAGE – STEUER
+  // ══════════════════════════════════════════════════════════════
+  doc.addPage();
+  drawPageHeader('Steuer-Übersicht', today);
+
+  // Steuer calc
+  const real = fifoRealized();
+  const taxGains=real.filter(r=>!r.taxFree&&r.gain>0).reduce((a,r)=>a+r.gain,0);
+  const taxLoss=Math.abs(real.filter(r=>!r.taxFree&&r.gain<0).reduce((a,r)=>a+r.gain,0));
+  const freeGains=real.filter(r=>r.taxFree&&r.gain>0).reduce((a,r)=>a+r.gain,0);
+  const afterCurr=Math.max(0,taxGains-taxLoss);
+  const carrySpot=cfg.lossSpot||0;
+  const netSpot=Math.max(0,afterCurr-carrySpot);
+  const remSpot=Math.max(0,carrySpot-afterCurr);
+  const spotTax=netSpot*(cfg.spotTax||0)/100;
+  const pGains=perpReal.filter(r=>r.pnl>0).reduce((a,r)=>a+r.pnl,0);
+  const pLoss=Math.abs(perpReal.filter(r=>r.pnl<0).reduce((a,r)=>a+r.pnl,0));
+  const pAfterCurr=Math.max(0,pGains-pLoss);
+  const carryPerp=cfg.lossPerp||0;
+  const netPerp=Math.max(0,pAfterCurr-carryPerp);
+  const remPerp=Math.max(0,carryPerp-pAfterCurr);
+  const perpTax=netPerp*(cfg.perpTax||26.375)/100;
+
+  // §23 box left, §20 box right
+  const bw=(W-26)/2;
+  // §23 box
+  doc.setFillColor(245,245,243);
+  doc.roundedRect(10,y,bw,48,2,2,'F');
+  doc.setFillColor(29,158,117);
+  doc.roundedRect(10,y,bw,8,2,2,'F');
+  doc.rect(10,y+4,bw,4,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);
+  doc.text('§23 EStG – Spot (Haltefrist 1 Jahr)',14,y+5.5);
+  const s23rows=[
+    ['Steuerpfl. Gewinne',fe(taxGains)],['Steuerfreie Gewinne',fe(freeGains)],
+    ['Lfd. Verluste','-'+fe(taxLoss)],['Zu versteuern (netto)',fe(netSpot)],
+    ['Est. Steuerlast ('+cfg.spotTax+'%)',fe(spotTax)],
+    ['Verlustvortrag verbleibend',fe(remSpot)],
+  ];
+  s23rows.forEach((r,i)=>{
+    const ry=y+11+i*6;
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(102,102,102);
+    doc.text(r[0],14,ry);
+    const isNeg=r[1].includes('-')&&i===2;
+    const isRed=i===4;
+    doc.setFont('helvetica','bold');
+    if(isNeg||isRed){doc.setTextColor(226,75,74);}else{doc.setTextColor(26,26,26);}
+    doc.text(r[1],10+bw-3,ry,{align:'right'});
+  });
+
+  // §20 box
+  doc.setFillColor(245,245,243);
+  doc.roundedRect(16+bw,y,bw,48,2,2,'F');
+  doc.setFillColor(24,95,165);
+  doc.roundedRect(16+bw,y,bw,8,2,2,'F');
+  doc.rect(16+bw,y+4,bw,4,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);
+  doc.text('§20 EStG – Perpetuals (KESt)',20+bw,y+5.5);
+  const s20rows=[
+    ['Realisierte Gewinne',fe(pGains)],['Lfd. Verluste','-'+fe(pLoss)],
+    ['Zu versteuern (netto)',fe(netPerp)],
+    ['Est. Steuerlast ('+cfg.perpTax+'%)',fe(perpTax)],
+    ['Verlustvortrag verbleibend',fe(remPerp)],
+  ];
+  s20rows.forEach((r,i)=>{
+    const ry=y+11+i*6;
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(102,102,102);
+    doc.text(r[0],20+bw,ry);
+    const isRed=i===3;
+    doc.setFont('helvetica','bold');
+    if(isRed){doc.setTextColor(226,75,74);}else{doc.setTextColor(26,26,26);}
+    doc.text(r[1],16+2*bw-3,ry,{align:'right'});
+  });
+  y += 54;
+
+  // Haltefristen
+  sectionHeading('Haltefristen §23 EStG – alle Positionen', GREEN);
+  const now=new Date();
+  doc.autoTable({
+    startY:y,
+    margin:{left:10,right:10},
+    styles:{fontSize:7.5,cellPadding:2,font:'helvetica'},
+    headStyles:{fillColor:GREEN,textColor:WHITE,fontStyle:'bold',fontSize:7},
+    alternateRowStyles:{fillColor:GRAY1},
+    columnStyles:{3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},8:{halign:'center'}},
+    head:[['Coin','Stück','Kaufdatum','Kaufpreis €','Live Wert €','Unreal. PnL €','Steuerfrei ab','Tage noch','Status']],
+    body: spots.filter(s=>s.type!=='sell').sort((a,b)=>new Date(a.date)-new Date(b.date)).map(s=>{
+      const fd=new Date(s.date);fd.setFullYear(fd.getFullYear()+1);
+      const days=Math.ceil((fd-now)/86400000);
+      const free=days<=0;
+      const val=s.amount*getPriceEur(s.coin);
+      const pnl=val-(s.priceEur||0);
+      return[s.coin,fn(s.amount,6),s.date,fe(s.priceEur||0),fe(val),sgn(pnl)+fe(pnl),fd.toISOString().split('T')[0],free?'✓':String(days),free?'Steuerfrei':days<=90?'Bald frei':'Läuft'];
+    }),
+    didParseCell:(d)=>{
+      if(d.section==='body'&&d.column.index===8){
+        d.cell.styles.textColor=d.cell.raw==='Steuerfrei'?GREEN:d.cell.raw==='Bald frei'?AMBER:GRAY2;
+        d.cell.styles.fontStyle='bold';
+      }
+      if(d.section==='body'&&d.column.index===5){
+        const v=d.cell.raw||'';
+        d.cell.styles.textColor=v.startsWith('+')?GREEN:v.startsWith('-')&&v!=='-'?RED:DARK;
+      }
+    }
+  });
+  y = doc.lastAutoTable.finalY + 6;
+
+  // Realized FIFO
+  if(real.length){
+    checkPageBreak(40);
+    sectionHeading('Realisierte Spot-Gewinne §23 EStG (FIFO)', DARK);
+    doc.autoTable({
+      startY:y,
+      margin:{left:10,right:10},
+      styles:{fontSize:7.5,cellPadding:2,font:'helvetica'},
+      headStyles:{fillColor:DARK,textColor:WHITE,fontStyle:'bold',fontSize:7},
+      alternateRowStyles:{fillColor:GRAY1},
+      columnStyles:{5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},8:{halign:'center'},9:{halign:'right'}},
+      head:[['Coin','Stück','Kaufdatum','Verkaufsdatum','Tage','Kosten €','Erlös €','Gewinn €','Status','Est. Steuer']],
+      body:real.map(r=>{
+        const t=r.taxFree||r.gain<=0?0:r.gain*(cfg.spotTax||0)/100;
+        return[r.coin,fn(r.amount,6),r.buyDate,r.sellDate,Math.floor(r.holdDays),fe(r.cost),fe(r.proceeds),sgn(r.gain)+fe(r.gain),r.taxFree?'Steuerfrei':'§23 Stpfl.',t>0?fe(t):'–'];
+      }),
+      didParseCell:(d)=>{
+        if(d.section==='body'&&d.column.index===7){d.cell.styles.textColor=d.cell.raw.startsWith('+')?GREEN:RED;d.cell.styles.fontStyle='bold';}
+        if(d.section==='body'&&d.column.index===8){d.cell.styles.textColor=d.cell.raw==='Steuerfrei'?GREEN:AMBER;}
+      }
+    });
+    y = doc.lastAutoTable.finalY + 6;
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // PAGE – EINZAHLUNGEN
+  // ══════════════════════════════════════════════════════════════
+  if(deposits.length){
+    doc.addPage();
+    drawPageHeader('Ein- & Auszahlungen', today);
+
+    const totIn=deposits.filter(d=>d.type!=='withdrawal').reduce((a,d)=>a+d.amount,0);
+    const totOut=deposits.filter(d=>d.type==='withdrawal').reduce((a,d)=>a+d.amount,0);
+    metricRow([
+      {label:'Gesamt Einzahlungen', value:fe(totIn), color:'green'},
+      {label:'Gesamt Auszahlungen', value:fe(totOut), color:'red'},
+      {label:'Netto', value:fe(totIn-totOut), color:(totIn-totOut)>=0?'green':'red'},
+    ]);
+
+    sectionHeading('Transaktionen', DARK);
+    doc.autoTable({
+      startY:y,
+      margin:{left:10,right:10},
+      styles:{fontSize:8,cellPadding:2.5,font:'helvetica'},
+      headStyles:{fillColor:DARK,textColor:WHITE,fontStyle:'bold',fontSize:7.5},
+      alternateRowStyles:{fillColor:GRAY1},
+      columnStyles:{2:{halign:'right'}},
+      head:[['Datum','Typ','Betrag €','Von (Bank)','An (Exchange)','Notiz']],
+      body:deposits.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).map(d=>[
+        d.date, d.type==='withdrawal'?'Auszahlung':'Einzahlung', fe(d.amount), d.from, d.to, d.note||''
+      ]),
+      didParseCell:(d)=>{
+        if(d.section==='body'&&d.column.index===1){
+          d.cell.styles.textColor=d.cell.raw==='Auszahlung'?RED:GREEN;
+          d.cell.styles.fontStyle='bold';
+        }
+      }
+    });
+    y = doc.lastAutoTable.finalY + 6;
+
+    // By exchange
+    checkPageBreak(30);
+    sectionHeading('Nach Exchange', ACCENT);
+    const exMap={};
+    deposits.forEach(d=>{if(!exMap[d.to])exMap[d.to]=0;exMap[d.to]+=d.type==='withdrawal'?-d.amount:d.amount;});
+    doc.autoTable({
+      startY:y,
+      margin:{left:10,right:10},
+      styles:{fontSize:8,cellPadding:2.5,font:'helvetica'},
+      headStyles:{fillColor:[24,95,165],textColor:WHITE,fontStyle:'bold'},
+      alternateRowStyles:{fillColor:GRAY1},
+      columnStyles:{1:{halign:'right'},2:{halign:'right'}},
+      head:[['Exchange','Netto €','Anteil %']],
+      body:Object.entries(exMap).sort((a,b)=>b[1]-a[1]).map(([ex,amt])=>[
+        ex, fe(amt), totIn>0?(Math.abs(amt)/totIn*100).toFixed(1)+'%':'–'
+      ])
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // FOOTER on all pages
+  // ══════════════════════════════════════════════════════════════
+  const pageCount = doc.internal.getNumberOfPages();
+  for(let i=1;i<=pageCount;i++){
+    doc.setPage(i);
+    doc.setFillColor(245,245,243);
+    doc.rect(0,285,W,12,'F');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7);
+    doc.setTextColor(102,102,102);
+    doc.text('₿ Portfolio · Privater Portfolio-Report · Keine Steuerberatung · Seite '+i+' von '+pageCount, W/2, 291, {align:'center'});
+  }
+
+  doc.save(`krypto_report_${dateStr}.pdf`);
+  toast('PDF wird heruntergeladen ✓');
+}
+
+function exportAll(){
+  const data={spots,perps,perpReal,deposits,cfg};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download=`krypto_export_${new Date().toISOString().split('T')[0]}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);toast('Export heruntergeladen ✓');
+}
+
+function importAll(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const st=document.getElementById('imp-status');st.textContent='Lese…';
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      const counts=[];
+      if(Array.isArray(d.spots)){spots=d.spots.map(migrateSpot);counts.push(spots.length+' Spot');}
+      if(Array.isArray(d.perps)){perps=d.perps;counts.push(perps.length+' Perps');}
+      if(Array.isArray(d.perpReal)){perpReal=d.perpReal;counts.push(perpReal.length+' Perp-Trades');}
+      // also support old key name
+      if(Array.isArray(d.perpRealized)&&!d.perpReal){perpReal=d.perpRealized;counts.push(perpReal.length+' Perp-Trades');}
+      if(Array.isArray(d.deposits)){deposits=d.deposits;counts.push(deposits.length+' Einzahlungen');}
+      if(d.settings||d.cfg){cfg={...cfg,...(d.cfg||d.settings)};}
+      save();refreshActive();
+      st.innerHTML=`<span style="color:var(--green)">✓ Import: ${counts.join(', ')}</span>`;
+      toast('Import erfolgreich ✓');
+    }catch(err){st.innerHTML=`<span style="color:var(--red)">⚠ Fehler: ${err.message}</span>`;}
+    ev.target.value='';
+  };reader.readAsText(file);
+}
+
+
+function clearAll(){if(!confirm('Wirklich ALLE Daten löschen?'))return;spots=[];perps=[];perpReal=[];deposits=[];cfg={spotTax:42,perpTax:26.375,lossSpot:0,lossPerp:0};save();refreshActive();toast('Alle Daten gelöscht');}
+
+// ─── AUTOCOMPLETE ─────────────────────────────────────────
+const TOP_COINS=['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','DOT','LINK','LTC','NEAR','MATIC','ARB','OP','SUI','APT','TON','PEPE','WIF'];
+const TOP_EX=['Binance','Coinbase','Kraken','Bybit','OKX','Bitget','KuCoin','MEXC','Bitpanda','Crypto.com','Trezor','Ledger'];
+const TOP_BANKS=['ING-DiBa','DKB','Comdirect','Sparkasse','Volksbank','Deutsche Bank','Postbank','N26','Revolut','PayPal','Trade Republic'];
+
+function addList(inputId,items){
+  const inp=document.getElementById(inputId);if(!inp)return;
+  const dl=document.createElement('datalist');dl.id=inputId+'-dl';
+  items.forEach(v=>{const o=document.createElement('option');o.value=v;dl.appendChild(o);});
+  document.body.appendChild(dl);inp.setAttribute('list',inputId+'-dl');
+}
+
+addList('s-coin',TOP_COINS);addList('p-coin',TOP_COINS);
+addList('s-exch',TOP_EX);addList('p-exch',TOP_EX);addList('dep-to',TOP_EX);
+addList('dep-from',TOP_BANKS);
+
+// ─── PERPETUAL CALCULATOR ─────────────────────────────────
+function initCalc(){
+  if(!window.React||!window.ReactDOM)return;
+  const{useState,useMemo}=React;
+  function PerpetualCalculator(){
+    const[selectedPos,setSelectedPos]=useState('new');
+    const[positionType,setPositionType]=useState('long');
+    const[entryPrice,setEntryPrice]=useState(82668);
+    const[currentPrice,setCurrentPrice]=useState(76500);
+    const[positionSizeCoins,setPositionSizeCoins]=useState(0.3461);
+    const[marginUSD,setMarginUSD]=useState(7720);
+    const[maintenanceMargin,setMaintenanceMargin]=useState(1);
+    
+    const handlePositionSelect=(e)=>{
+      const val=e.target.value;
+      setSelectedPos(val);
+      if(val==='new'){
+        // Neue Position - Felder leeren
+        setPositionType('long');
+        setEntryPrice('');
+        setCurrentPrice('');
+        setPositionSizeCoins('');
+        setMarginUSD('');
+      }else if(perps&&perps.length>0){
+        const pos=perps[parseInt(val)];
+        if(pos){
+          setPositionType(pos.dir||'long');
+          // EUR zu USD umrechnen
+          setEntryPrice((pos.entry||0)*(eurUsd||1.08));
+          setCurrentPrice(getPriceUsd(pos.coin)||76500);
+          setPositionSizeCoins(pos.size||0.3461);
+          // Margin EUR zu USD
+          setMarginUSD((pos.margin||0)*(eurUsd||1.08));
+        }
+      }
+    };
+    
+    const calculations=useMemo(()=>{
+      if(!entryPrice||!currentPrice||!positionSizeCoins||!marginUSD)return{collateral:0,marginLevel:0,positionValue:0,pnl:0,pnlPercent:0,liquidationPrice:0,marginToLiquidation:0,riskLevel:'safe',coinAmount:0,marginPercent:0,calculatedLeverage:0,notionalAtEntry:0};
+      const coinAmount=positionSizeCoins;const notionalAtEntry=coinAmount*entryPrice;const positionValue=coinAmount*currentPrice;const marginPercent=(marginUSD/positionValue)*100;const calculatedLeverage=positionValue/marginUSD;const collateral=marginUSD;
+      let pnl=0;if(positionType==='long'){pnl=coinAmount*(currentPrice-entryPrice)}else{pnl=coinAmount*(entryPrice-currentPrice)}
+      const pnlPercent=collateral>0?(pnl/collateral)*100:0;
+      let liquidationPrice=0;const maintenanceCollateral=(positionValue/calculatedLeverage)*(maintenanceMargin/100);
+      if(positionType==='long'){liquidationPrice=entryPrice-(collateral-maintenanceCollateral)/coinAmount}else{liquidationPrice=entryPrice+(collateral-maintenanceCollateral)/coinAmount}
+      const liquidationBuffer=positionType==='long'?currentPrice-liquidationPrice:liquidationPrice-currentPrice;
+      const marginLevel=liquidationBuffer>0?(liquidationBuffer/(currentPrice*maintenanceMargin/100))*100:0;
+      let riskLevel='safe';if(marginLevel<50)riskLevel='danger';else if(marginLevel<100)riskLevel='warning';
+      return{collateral,marginLevel:Math.max(0,marginLevel),positionValue,pnl,pnlPercent,liquidationPrice:Math.abs(liquidationPrice),marginToLiquidation:liquidationBuffer,riskLevel,coinAmount,marginPercent,calculatedLeverage,notionalAtEntry};
+    },[positionType,entryPrice,currentPrice,positionSizeCoins,marginUSD,maintenanceMargin]);
+    
+    const getRiskColor=risk=>risk==='danger'?'#E24B4A':risk==='warning'?'#EF9F27':'#1D9E75';
+    const getRiskBg=risk=>risk==='danger'?'rgba(226, 75, 74, 0.1)':risk==='warning'?'rgba(239, 159, 39, 0.1)':'rgba(29, 158, 117, 0.1)';
+    
+    return React.createElement('div',{style:{padding:'16px'}},
+      React.createElement('div',{style:{marginBottom:'16px',padding:'12px',background:'var(--bg2)',borderRadius:'8px'}},
+        React.createElement('label',{style:{fontSize:'12px',color:'var(--text2)',display:'block',marginBottom:'6px'}},'Position auswählen oder neue erstellen'),
+        React.createElement('select',{value:selectedPos,onChange:handlePositionSelect,style:{width:'100%',padding:'8px',border:'.5px solid var(--border)',borderRadius:'6px',fontSize:'14px',background:'var(--bg)',color:'var(--text)'}},
+          React.createElement('option',{value:'new'},'+ Neue Position'),
+          perps.map((p,i)=>React.createElement('option',{key:i,value:i},`${p.coin} - ${p.dir.toUpperCase()} - Entry: €${p.entry.toFixed(2)}`))
+        )
+      ),
+      React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',marginBottom:'16px'}},
+        ['long','short'].map(type=>React.createElement('button',{key:type,onClick:()=>setPositionType(type),style:{padding:'12px',border:positionType===type?`2px solid ${type==='long'?'#1D9E75':'#E24B4A'}`:'2px solid transparent',borderRadius:'8px',fontSize:'14px',fontWeight:'600',cursor:'pointer',background:positionType===type?(type==='long'?'rgba(29, 158, 117, 0.2)':'rgba(226, 75, 74, 0.2)'):'var(--bg2)',color:positionType===type?(type==='long'?'#1D9E75':'#E24B4A'):'var(--text2)'}},type==='long'?'📈 LONG':'📉 SHORT'))
+      ),
+      React.createElement('div',{style:{background:getRiskBg(calculations.riskLevel),border:`2px solid ${getRiskColor(calculations.riskLevel)}`,borderRadius:'8px',padding:'12px',marginBottom:'16px'}},
+        React.createElement('p',{style:{margin:'0',fontWeight:'600',color:getRiskColor(calculations.riskLevel)}},
+          calculations.riskLevel==='danger'?'🔴 CRITICAL - Liquidation Risk!':calculations.riskLevel==='warning'?'🟡 WARNING - Getting Close':'🟢 SAFE - Margin Healthy'
+        ),
+        React.createElement('p',{style:{margin:'4px 0 0 0',fontSize:'12px',color:'var(--text2)'}},`Margin Level: ${calculations.marginLevel.toFixed(0)}%`)
+      ),
+      React.createElement('div',{style:{display:'grid',gap:'12px',marginBottom:'16px'}},
+        ['Entry Price (USD)','Current Price (USD)','Position Size (Coins)','Initial Margin (USD)'].map((label,i)=>{
+          const vals=[entryPrice,currentPrice,positionSizeCoins,marginUSD];
+          const setters=[setEntryPrice,setCurrentPrice,setPositionSizeCoins,setMarginUSD];
+          return React.createElement('div',{key:i,style:{background:'var(--bg2)',border:'.5px solid var(--border)',borderRadius:'8px',padding:'12px'}},
+            React.createElement('p',{style:{margin:'0',fontSize:'11px',color:'var(--text3)',marginBottom:'6px'}},label),
+            React.createElement('input',{type:'number',step:i===2?'0.0001':'1',value:vals[i],onChange:e=>setters[i](parseFloat(e.target.value)),style:{width:'100%',padding:'8px',border:'.5px solid var(--border)',borderRadius:'6px',fontSize:'14px',background:'var(--bg)',color:'var(--text)'}})
+          );
+        })
+      ),
+      React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}},
+        React.createElement('div',{style:{background:'var(--bg2)',border:'.5px solid var(--border)',borderRadius:'8px',padding:'12px'}},
+          React.createElement('p',{style:{margin:'0',fontSize:'11px',color:'var(--text3)',marginBottom:'4px'}},'Liquidation Price'),
+          React.createElement('p',{style:{margin:'0',fontSize:'18px',fontWeight:'700',color:'#E24B4A'}},'$'+calculations.liquidationPrice.toFixed(0))
+        ),
+        React.createElement('div',{style:{background:'var(--bg2)',border:'.5px solid var(--border)',borderRadius:'8px',padding:'12px'}},
+          React.createElement('p',{style:{margin:'0',fontSize:'11px',color:'var(--text3)',marginBottom:'4px'}},'PnL / ROE'),
+          React.createElement('p',{style:{margin:'0',fontSize:'16px',fontWeight:'700',color:calculations.pnl>=0?'#1D9E75':'#E24B4A'}},'$'+calculations.pnl.toFixed(2)+' ('+calculations.pnlPercent.toFixed(1)+'%)')
+        ),
+        React.createElement('div',{style:{background:'var(--bg2)',border:'.5px solid var(--border)',borderRadius:'8px',padding:'12px'}},
+          React.createElement('p',{style:{margin:'0',fontSize:'11px',color:'var(--text3)',marginBottom:'4px'}},'Collateral'),
+          React.createElement('p',{style:{margin:'0',fontSize:'16px',fontWeight:'700',color:'#3B82F6'}},'$'+calculations.collateral.toFixed(2))
+        ),
+        React.createElement('div',{style:{background:'var(--bg2)',border:'.5px solid var(--border)',borderRadius:'8px',padding:'12px'}},
+          React.createElement('p',{style:{margin:'0',fontSize:'11px',color:'var(--text3)',marginBottom:'4px'}},'Position Value'),
+          React.createElement('p',{style:{margin:'0',fontSize:'16px',fontWeight:'700',color:'#7c3aed'}},'$'+calculations.positionValue.toFixed(2))
+        )
+      )
+    );
+  }
+  const e=document.getElementById('calc-container');
+  if(e)ReactDOM.createRoot(e).render(React.createElement(PerpetualCalculator));
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+loadDataJson().then(()=>{
+  fetchPrices();
+  setInterval(()=>fetchPrices(),60000);
+  renderDash();
+}).catch(()=>{
+  // Fallback: use loaded localStorage data
+  fetchPrices();
+  setInterval(()=>fetchPrices(),60000);
+  renderDash();
+});
+</script>
+</body>
+</html>
