@@ -12,7 +12,6 @@
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
 :root{--bg:#fff;--bg2:#f5f5f3;--bg3:#efefed;--text:#1a1a1a;--text2:#666;--text3:#999;--border:rgba(0,0,0,.12);--border2:rgba(0,0,0,.2);--radius:8px;--rlg:12px;--green:#1D9E75;--red:#E24B4A;--amber:#EF9F27;--blue:#3B82F6;--orange:#F97316;--gbg:#EAF3DE;--gtx:#3B6D11;--rbg:#FCEBEB;--rtx:#A32D2D;--abg:#FAEEDA;--atx:#854F0B;--bbg:#E6F1FB;--btx:#185FA5}
-@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f0f0f0;--text2:#aaa;--text3:#555;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.2);--blue:#60A5FA;--orange:#FB923C;--gbg:#0d3320;--gtx:#5DCAA5;--rbg:#3a1515;--rtx:#F09595;--abg:#3a2a00;--atx:#FAC775;--bbg:#0c2a44;--btx:#85B7EB}}
 :root[data-theme="dark"]{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f0f0f0;--text2:#aaa;--text3:#555;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.2);--blue:#60A5FA;--orange:#FB923C;--gbg:#0d3320;--gtx:#5DCAA5;--rbg:#3a1515;--rtx:#F09595;--abg:#3a2a00;--atx:#FAC775;--bbg:#0c2a44;--btx:#85B7EB}
 :root[data-theme="light"]{--bg:#fafafa;--bg2:#f5f5f5;--bg3:#f0f0f0;--text:#1c1c1e;--text2:#666;--text3:#aaa;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.2);--blue:#3b82f6;--orange:#f97316;--gbg:#e8f5e9;--gtx:#1D9E75;--rbg:#fee2e2;--rtx:#E24B4A;--abg:#fef3c7;--atx:#F0997B;--bbg:#dbeafe;--btx:#3B82F6}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -419,7 +418,7 @@ function fEprice(n){
 function toggleDarkMode(){
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   if(isDark){
-    document.documentElement.removeAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', 'light');
     localStorage.setItem('ct_theme', 'light');
   } else {
     document.documentElement.setAttribute('data-theme', 'dark');
@@ -431,7 +430,12 @@ function initTheme(){
   const saved = localStorage.getItem('ct_theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const isDark = saved ? saved === 'dark' : prefersDark;
-  if(isDark) document.documentElement.setAttribute('data-theme', 'dark');
+  
+  if(isDark){
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
 }
 
 initTheme();
